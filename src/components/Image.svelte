@@ -100,15 +100,8 @@
                 disableLabelChanges 
                 on:change={imageChange} 
                 bind:ref={imageRef} 
-                labelText='Change image'
+                labelText='Kik code'
             />
-            <!-- <FileUploaderButton
-                labelText='Add to images' 
-                on:change={imagesChange}
-                bind:ref={imagesRef}
-                disableLabelChanges
-                multiple
-            /> -->
         </ButtonSet>
     </Column>
 </Row>
