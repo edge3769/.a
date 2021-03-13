@@ -16,20 +16,13 @@
 <script>
     export let group
     import {
-        Tag,
         Row,
         Link,
         Column,
     } from 'carbon-components-svelte'
-    import {marked} from 'utils'
     import { stores } from '@sapper/app'
 
     let { session } = stores()
-
-    let description
-    if (group.description){
-        description = marked(group.description)
-    }
 </script>
 
 <Row  noGutter>
@@ -45,13 +38,3 @@
         {/if}
     </Column>
 </Row>
-
-{#if description}
-    <Row noGutter>
-        <Column lg={4} sm={4} md={4} xlg={4}>
-            {#each group.tags as tag}
-                <Tag>{tag}</Tag>
-            {/each}
-        </Column>
-    </Row>
-{/if}
