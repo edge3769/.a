@@ -16,6 +16,7 @@
 <script>
     export let group
     import {
+        Tag,
         Row,
         Link,
         Column,
@@ -23,8 +24,6 @@
     import {marked} from 'utils'
     import { stores } from '@sapper/app'
 
-    let alt
-    
     let { session } = stores()
 
     let description
@@ -41,22 +40,7 @@
         {#if group.name}
             <h2>{group.name}</h2>
         {/if}
-        <p>{group.itype}</p>
-        {#if group.address}
-            <p>{group.address}</p>
-        {/if}
-        {#if group.website}
-            <Link href={group.website}>{group.website}</Link>
-        {/if}
-        {#if group.email}
-            <p>{group.email}</p>
-        {/if}
-        {#if group.phone}
-            <p>{group.phone}</p>
-        {/if}
-        <!-- <Link href='' on:click={open}>Gallery</Link> -->
-        <Link href='{group.user}'>User</Link>
-        {#if $session.user.username == group.user}
+        {#if $session.user && $session.user.username == group.user}
             <Link href='edit/{group.id}'>Edit</Link>
         {/if}
     </Column>
@@ -65,7 +49,9 @@
 {#if description}
     <Row noGutter>
         <Column lg={4} sm={4} md={4} xlg={4}>
-            <p>{@html description}</p>
+            {#each group.tags as tag}
+                <Tag>{tag}</Tag>
+            {/each}
         </Column>
     </Row>
 {/if}

@@ -11,12 +11,9 @@
     } from 'carbon-components-svelte'
     import * as api from 'api'
     import {
-        itype,
         groupTags
     } from '../stores.js'
 
-    $itype='all'
-    $:get($itype)
 
     let groups = []
     let page = 0
@@ -61,9 +58,8 @@
     let get = async function(){
         let tagString = JSON.stringify($groupTags)
         let url = `groups?tags=${tagString}&visible=1&page=${page+1}`
-        if ($itype != 'all') url = url + '&itype=' + $itype
         let res = await api.get(url)
-        groups = res.groups
+        groups = res.items
         total = res.total
         pages = res.pages
         got = true
@@ -74,7 +70,7 @@
 <svelte:window on:keydown={keydown} />
 
 <svelte:head>
-    <title>Marketlinks</title>
+    <title>x369</title>
 </svelte:head>
 
 <Row noGutter>
@@ -102,16 +98,6 @@
         </Column>
     </Row>
 {/if}
-
-<Row noGutter>
-    <Column>
-        <RadioButtonGroup bind:selected={$itype}>
-            <RadioButton labelText='All' value='all' />
-            <RadioButton labelText='Products' value='product' />
-            <RadioButton labelText='Services' value='service' />
-        </RadioButtonGroup>
-    </Column>
-</Row>
 
 {#each groups as group}
     <br />

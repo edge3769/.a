@@ -16,7 +16,6 @@
         FluidForm,
         TextInput,
         Checkbox,
-        TextArea,
         Button,
         Column,
         Row,
@@ -29,28 +28,16 @@
 
     let username = user.username
     let visible = user.visible
-    let address = user.address
-    let website = user.website
     let images = user.images
-    let image = user.image
     let tags = user.tags
-    let email = user.email
-    let phone = user.phone
-    let about = user.about
     let token = user.token
-    let name = user.name
 
     let usernameInvalid
     let usernameError
-    let files = []
     let current
     let open
     let tag
     let ref
-
-    // images.forEach(i=>{
-    //     files = [...files, {url:i, name:'null', ref:null, status:'complete'}]
-    // })
 
     $: if (username === '') {
         usernameInvalid=true
@@ -90,23 +77,11 @@
     }
 
     let edit = async () => {
-        images = []
-        files.map(f=>{
-            images.push(f.url)
-        })
         images = images
         let data = {
             username,
             visible,
-            website,
-            address,
-            images,
-            email,
-            phone,
-            about,
-            image,
             tags,
-            name,
         } 
         let res = await api.put('users', data, token)
         if (res.id) {
@@ -121,8 +96,6 @@
 <svelte:head>
     <title>Edit</title>
 </svelte:head>
-
-<Image bind:files bind:image />
 
 <Row noGutter>
     <Column>
@@ -167,21 +140,7 @@
                 bind:value={username}
                 labelText="Username"
             />
-            <TextInput
-                labelText="Email"
-                bind:value={email}
-            />
-            <TextInput labelText="Name" bind:value={name} />
-            <TextInput labelText="Phone" bind:value={phone} />
-            <TextInput labelText="Address" bind:value={address} />
-            <TextInput labelText="Website" bind:value={website} />
         </FluidForm>
-    </Column>
-</Row>
-    
-<Row noGutter>
-    <Column>
-        <TextArea labelText='About(Markdown)' bind:value={about} />
     </Column>
 </Row>
     

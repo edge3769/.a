@@ -11,7 +11,6 @@
         ButtonSet,
         FileUploaderButton
     } from 'carbon-components-svelte'
-    import FSBox from './FSBox.svelte'
     import FileItem from './File/FileItem.svelte'
     import Delete16 from 'carbon-icons-svelte/lib/Delete16'
 
@@ -81,13 +80,6 @@
         }
     }
 </script>
-
-<FSBox
-    on:down={imagesPrev}
-    bind:url={file.url}
-    on:up={imagesNext}
-    bind:open
-/>
 
 <Row noGutter>
     <Column>

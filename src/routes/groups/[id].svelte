@@ -113,7 +113,8 @@
         let url = `groups?visible=${visible}&id=${id}&tags=${tagString}&page=${page+1}`
         if (itype != 'all') url = url + '&itype=' + itype
         let res = await api.get(url)
-        groups = res.groups
+        console.log(res)
+        groups = res.items
         total = res.total
         pages = res.pages
         got = true
@@ -133,16 +134,6 @@
             bind:value={tag}
             bind:ref
         />
-    </Column>
-</Row>
-
-<Row noGutter>
-    <Column>
-        <RadioButtonGroup bind:selected={itype}>
-            <RadioButton labelText='All' value='all' />
-            <RadioButton labelText='Products' value='product' />
-            <RadioButton labelText='Services' value='service' />
-        </RadioButtonGroup>
     </Column>
 </Row>
 

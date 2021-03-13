@@ -60,7 +60,7 @@
         let tagString = JSON.stringify($userTags)
         let url = `users?tags=${tagString}&page=${page+1}`
         let res = await api.get(url)
-        users = res.groups
+        users = res.items
         total = res.total
         pages = res.pages
         got = true
@@ -109,7 +109,7 @@
             {:else}
                 <img style='vertical-align: top;' height='37px' width='37px' alt='profile pic' src='/placeholder.png'>
             {/if}
-            <Link href='{user.username}'>{user.name}</Link>
+            <p>{user.username}</p>
         </div>
     </Row>
     {/each}

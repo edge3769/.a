@@ -16,12 +16,9 @@
         Row,
         Button,
         Column,
-        TextArea,
         TextInput,
         ButtonSet,
         FluidForm,
-        RadioButton,
-        RadioButtonGroup
     } from 'carbon-components-svelte'
     import { goto } from '@sapper/app'
     import * as api from 'api'
@@ -75,17 +72,10 @@
     }
 
     let add = async function() {
-        let images = files.map((f)=>{
-            f = f.file
-        })
         let data = {
             tags,
             name,
             image,
-            price,
-            itype,
-            images,
-            description
         }
         let res = await api.post('groups', data, token)
         if (res.nameError) {
@@ -104,15 +94,6 @@
 </svelte:head>
 
 <Image bind:image bind:files />
-
-<Row noGutter>
-    <Column>
-        <RadioButtonGroup bind:selected={itype}>
-            <RadioButton labelText='Product' value='product' />
-            <RadioButton labelText='Service' value='service' />
-        </RadioButtonGroup>
-    </Column>
-</Row>
 
 <Row noGutter>
     <Column noGutter>
@@ -151,9 +132,7 @@
                 labelText="Name"
                 bind:value={name} 
             />
-            <TextInput labelText="Price" bind:value={price} />
         </FluidForm>
-            <TextArea labelText="Description" bind:value={description} />
     </Column>
 </Row>
 
