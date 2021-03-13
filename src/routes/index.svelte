@@ -5,9 +5,7 @@
         Link,
         Search,
         Column,
-        RadioButton,
         PaginationNav,
-        RadioButtonGroup
     } from 'carbon-components-svelte'
     import * as api from 'api'
     import {
@@ -34,6 +32,14 @@
                     addTag()
                     get()
                 }
+        }
+    }
+
+    let searchF=()=>{
+        current=ref
+        if ($groupTags.length > 0){
+            open=true
+            get()
         }
     }
 
@@ -76,7 +82,7 @@
 <Row noGutter>
     <Column>
         <Search
-            on:focus={() => {current=ref}}
+            on:focus={searchF}
             bind:value={tag}
             bind:ref
         />

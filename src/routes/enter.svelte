@@ -25,8 +25,18 @@
     let usernameError
     let passwordError
 
+    $: console.log(usernameInvalid)
+    $: console.log(passwordInvalid)
+
     let username = null
     let password = null
+
+    let keydown = (e) => {
+        switch(e.keyCode){
+            case 13:
+                login()
+        }
+    }
 
     $: if (username === '') {
         usernameInvalid=true
@@ -42,8 +52,9 @@
     }
 
     let join  = async function() {
+        if (!username || !password || username === '' || password === '') return
         usernameInvalid=false
-        if (usernameInvalid || passwordInvalid) return
+        passwordInvalid=false
         let r = await post(`auth/join`, { username, password })
         usernameError = r.usernameError
         passwordError = r.passwordError
@@ -57,13 +68,15 @@
     }
 
     let login = async function() {
+        if (!username || !password || username === '' || password === '') return
         usernameInvalid=false
-        if (usernameInvalid || passwordInvalid) return
+        passwordInvalid=false
         let r = await post(`auth/login`, { username, password })
         usernameError = r.usernameError
         passwordError = r.passwordError
         usernameInvalid = r.usernameInvalid
         passwordInvalid = r.passwordInvalid
+        console.log(r)
         if (r.user) {
             $session.user = r.user
             $logged = true
@@ -71,6 +84,8 @@
         }
     }
 </script>
+
+<svelte:window on:keydown={keydown} />
 
 <svelte:head>
     <title>Enter</title>

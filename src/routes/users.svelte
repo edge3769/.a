@@ -1,74 +1,23 @@
-<script>
-    import {
-        Tag,
-        Row,
-        Link,
-        Search,
-        Column,
-        PaginationNav
-    } from 'carbon-components-svelte'
+<script context='module'>
     import * as api from 'api'
-    import { 
-        userTags
-    } from '../stores.js'
-    import { onMount } from 'svelte';
-
-    onMount(()=>{
-        ref.focus()
-    })
-
-    let users = []
-    let page = 0
-    let total = 0
-    let pages = 0
-
-    let current
-
-    let open = false
-    let got
-    let tag
-    let ref
-
-    let keydown = (e) => {
-        switch(e.keyCode){
-            case 13:
-                if (current==ref){
-                    addTag()
-                    get()
-                }
+    export async function preload({params}, {user}){
+        if(!user){
+            this.redirect('302', 'enter')
         }
-    }
-
-    let addTag = () => {
-        if (tag != '' && !$userTags.includes(tag)){
-            $userTags = [...$userTags, tag]
-            open=true
-        }
-    }
-
-    let delTag = (tag) => {
-        $userTags=$userTags.filter(t => t != tag)
-        get()
-    }
-
-    let clear = () => {
-        $userTags = []
-        open = false
-    }
-
-    let get = async function(){
-        let tagString = JSON.stringify($userTags)
-        let url = `users?tags=${tagString}&page=${page+1}`
-        let res = await api.get(url)
-        users = res.items
-        total = res.total
-        pages = res.pages
-        got = true
-
+        let { items, total, pages } = await api.get('users', user.token)
+        return { items, total, pages}
     }
 </script>
 
-<svelte:window on:keydown={keydown} />
+<script>
+    export let items, total//, pages
+    import {
+        Row,
+        Column,
+    } from 'carbon-components-svelte'
+
+    // let page = 0
+</script>
 
 <svelte:head>
     <title>Users</title>
@@ -76,48 +25,30 @@
 
 <Row noGutter>
     <Column>
-        <Search
-            on:focus={() => (current=ref)}
-            bind:value={tag}
-            bind:ref
-        />
+        <strong>Best match</strong>
     </Column>
 </Row>
 
-{#if open}
+{#each items as user}
+    <br/>
     <Row noGutter>
         <Column>
-            <Tag
-                on:click={clear}
-                type='magenta'
-            >
-                Clear
-            </Tag>
-            {#each $userTags as tag}
-                <Tag filter on:click={delTag(tag)}>{tag}</Tag>
-            {/each}
+            <div>
+                <p>{user.username}</p>
+            </div>  
         </Column>
     </Row>
-{/if}
-
-{#each users as user}
-    <br />
-    <Row noGutter>
-        <div>
-            <p>{user.username}</p>
-        </div>
-    </Row>
-    {/each}
+{/each}
 
 <!--08168080932 - Whatsapp
     08032146531 - Normal -->
 
-{#if got && total < 1}
+{#if total < 1}
 <div>
-    <p>There don't seem to be any results</p>
+    <p>There doesn't seem to be any result</p><!-- <p>There don't seem to be any results</p> -->
 </div>
 {/if}
 
-{#if total>10}
+<!-- {#if total>10}
     <PaginationNav loop bind:page bind:total={pages}/>
-{/if}
+{/if} -->
