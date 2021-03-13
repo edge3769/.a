@@ -14,13 +14,10 @@
     export let group, user
     import { goto } from '@sapper/app'
     import {
-        RadioButtonGroup,
-        RadioButton,
         FluidForm,
         ButtonSet,
         TextInput,
         Checkbox,
-        TextArea,
         Column,
         Button,
         Modal,
@@ -32,27 +29,15 @@
 
     let nameInvalid
 
-    let description = group.description
     let visible = group.visible
-    let images = group.images
-    let price = group.price
-    let itype = group.itype
-    let image = group.image
+    let code = group.code
     let name = group.name
     let tags = group.tags
-    let files = []
     let current
     let delOpen
-    let file
     let open
     let ref
     let tag
-
-    if (images){
-        for (file of images){
-            files = [...files, {file: file, name: file.name, ref: null, status: 'completed'}]
-        }
-    }
 
     let clear = () => {
         tags = []
@@ -88,17 +73,10 @@
     }
 
     let edit = async function(){
-        images = files.map((f)=>{
-            f = f.file
-        })
         let data = {
-            description,
             id: group.id,
-            images,
-            image,
+            code,
             visible,
-            price,
-            itype,
             name,
             tags,
         }
@@ -129,20 +107,11 @@
     <title>Edit Group</title>
 </svelte:head>
 
-<Image bind:files bind:image />
+<Image bind:code />
 
 <Row noGutter>
     <Column>
         <Checkbox bind:checked={visible} labelText='Visible' />
-    </Column>
-</Row>
-
-<Row noGutter>
-    <Column>
-        <RadioButtonGroup bind:selected={itype}>
-            <RadioButton labelText='Product' value='product' />
-            <RadioButton labelText='Service' value='service' />
-        </RadioButtonGroup>
     </Column>
 </Row>
 
@@ -182,9 +151,7 @@
                 bind:invalid={nameInvalid}
                 invalidText='Name taken'
             />
-            <TextInput labelText="Price" bind:value={price} />
         </FluidForm>
-            <TextArea labelText="Description" bind:value={description} />
     </Column>
 </Row>
 

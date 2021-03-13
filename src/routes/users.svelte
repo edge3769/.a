@@ -104,11 +104,6 @@
     <br />
     <Row noGutter>
         <div>
-            {#if user.image}
-                <img style='vertical-align: top;' height='37px' width='37px' alt='profile pic' src={user.image}>
-            {:else}
-                <img style='vertical-align: top;' height='37px' width='37px' alt='profile pic' src='/placeholder.png'>
-            {/if}
             <p>{user.username}</p>
         </div>
     </Row>

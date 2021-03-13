@@ -33,7 +33,7 @@
     let files = []
     let tags = []
     let current
-    let image
+    let code
     let desc
     let open
     let tag
@@ -75,7 +75,7 @@
         let data = {
             tags,
             name,
-            image,
+            code,
         }
         let res = await api.post('groups', data, token)
         if (res.nameError) {
@@ -93,7 +93,7 @@
     <title>Add Group</title>
 </svelte:head>
 
-<Image bind:image bind:files />
+<Image bind:code />
 
 <Row noGutter>
     <Column noGutter>

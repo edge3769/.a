@@ -103,11 +103,6 @@
     <br />
     <Row noGutter>
         <div>
-            {#if group.image}
-                <img style='vertical-align: top;' height='37px' width='37px' alt='profile pic' src={group.image}>
-            {:else}
-                <img style='vertical-align: top;' height='37px' width='37px' alt='profile pic' src='/placeholder.png'>
-            {/if}
             <Link href='group/{group.id}'>{group.name}</Link>
         </div>
     </Row>

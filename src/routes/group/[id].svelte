@@ -27,7 +27,7 @@
 
 <Row  noGutter>
     <Column lg={4} sm={4} md={4} xlg={4}>
-            <img style='padding:0 1em; max-width: 100%; height: auto;' alt='groupImage' src={group.image}>
+            <img style='padding:0 1em; max-width: 100%; height: auto;' alt='groupImage' src={group.code}>
     </Column>
     <Column lg={4} sm={4} md={4} xlg={4}>
         {#if group.name}

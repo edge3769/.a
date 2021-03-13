@@ -28,7 +28,6 @@
 
     let username = user.username
     let visible = user.visible
-    let images = user.images
     let tags = user.tags
     let token = user.token
 
@@ -77,7 +76,6 @@
     }
 
     let edit = async () => {
-        images = images
         let data = {
             username,
             visible,

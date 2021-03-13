@@ -113,7 +113,6 @@
         let url = `groups?visible=${visible}&id=${id}&tags=${tagString}&page=${page+1}`
         if (itype != 'all') url = url + '&itype=' + itype
         let res = await api.get(url)
-        console.log(res)
         groups = res.items
         total = res.total
         pages = res.pages
@@ -165,11 +164,6 @@
     <br/>
     <Row noGutter>
         <div>
-            {#if group.image}
-                <img style='vertical-align: top;' height='37px' width='37px' alt='profile pic' src={group.image}>
-            {:else}
-                <img style='vertical-align: top;' height='37px' width='37px' alt='profile pic' src='/placeholder.png'>
-            {/if}
             <Link href='group/{group.id}'>{group.name}</Link>
         </div>
     </Row>
