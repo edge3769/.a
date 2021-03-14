@@ -78,14 +78,13 @@
     let tag
     let ref
 
-    $: get(visible)
+    $: get(tags, visible)
 
     let keydown = (e) => {
         switch(e.keyCode){
             case 13:
                 if (current==ref){
                     addTag()
-                    get()
                 }
         }
     }
@@ -100,7 +99,6 @@
 
     let delTag = (tag) => {
         tags=tags.filter(t => t != tag)
-        get()
     }
 
     let clear = () => {

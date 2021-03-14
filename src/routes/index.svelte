@@ -25,12 +25,13 @@
     let tag
     let ref
 
+    $: get($groupTags)
+
     let keydown = (e) => {
         switch(e.keyCode){
             case 13:
                 if (current==ref){
                     addTag()
-                    get()
                 }
         }
     }
@@ -53,7 +54,6 @@
 
     let delTag = (tag) => {
         $groupTags=$groupTags.filter(t => t != tag)
-        get()
     }
 
     let clear = () => {
@@ -65,6 +65,7 @@
         let tagString = JSON.stringify($groupTags)
         let url = `groups?tags=${tagString}&visible=1&page=${page+1}`
         let res = await api.get(url)
+        console.log(res)
         groups = res.items
         total = res.total
         pages = res.pages
