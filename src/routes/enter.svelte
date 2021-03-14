@@ -25,9 +25,6 @@
     let usernameError
     let passwordError
 
-    $: console.log(usernameInvalid)
-    $: console.log(passwordInvalid)
-
     let username = null
     let password = null
 
@@ -76,7 +73,6 @@
         passwordError = r.passwordError
         usernameInvalid = r.usernameInvalid
         passwordInvalid = r.passwordInvalid
-        console.log(r)
         if (r.user) {
             $session.user = r.user
             $logged = true

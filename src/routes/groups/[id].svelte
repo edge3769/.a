@@ -24,11 +24,9 @@
     export let user
     export let id
 
-    import { myItype, userItype, whose } from '../../stores'
+    import { myTags } from '../../stores'
     import {
-        RadioButtonGroup,
         PaginationNav,
-        RadioButton,
         Checkbox,
         Column,
         Search,
@@ -43,42 +41,16 @@
         ref.focus()
     })
 
-    let title
-    let itype='all'
-
-    $:get(itype)
-
-    function changeItype() {
-        if($whose && $whose=='my'){
-            $myItype=itype
-        } else {
-            $userItype=itype
-        }
-    }
-
-    $: changeItype(itype)
-
-    if ($whose && $whose=='my'){
-        title='My Groups'
-    } else {
-        if(user.name){
-            title=`${user.name.split(' ')[0]}'s groups`
-        }else{
-            title=`${user.username}'s groups`
-        }
-    }
-
     let page = 0
 
     let visible = true
     let open = false
     let current
-    let tags=[]
     let got
     let tag
     let ref
 
-    $: get(tags, visible)
+    $: get($myTags, visible)
 
     let keydown = (e) => {
         switch(e.keyCode){
@@ -89,27 +61,34 @@
         }
     }
 
+    let searchF=()=>{
+        current=ref
+        if ($myTags.length > 0){
+            open=true
+            get()
+        }
+    }
+
     let addTag = () => {
-        if (tag != '' && !tags.includes(tag)){
-            tags = [...tags, tag]
+        if (tag != '' && !$myTags.includes(tag)){
+            $myTags = [...$myTags, tag]
             open=true
             tag = ''
         }
     }
 
     let delTag = (tag) => {
-        tags=tags.filter(t => t != tag)
+        $myTags=$myTags.filter(t => t != tag)
     }
 
     let clear = () => {
-        tags = []
+        $myTags = []
         open = false
     }
 
     let get = async function(){
-        let tagString = JSON.stringify(tags)
+        let tagString = JSON.stringify($myTags)
         let url = `groups?visible=${visible}&id=${id}&tags=${tagString}&page=${page+1}`
-        if (itype != 'all') url = url + '&itype=' + itype
         let res = await api.get(url)
         groups = res.items
         total = res.total
@@ -121,13 +100,13 @@
 <svelte:window on:keydown={keydown} />
 
 <svelte:head>
-    <title>{title}</title>
+    <title>My Groups</title>
 </svelte:head>
 
 <Row noGutter>
     <Column noGutter>
         <Search
-            on:focus={() => (current=ref)}
+            on:focus={searchF}
             bind:value={tag}
             bind:ref
         />
@@ -151,7 +130,7 @@
             >
                 Clear
             </Tag>
-            {#each tags as tag}
+            {#each $myTags as tag}
                 <Tag filter on:click={delTag(tag)}>{tag}</Tag>
             {/each}
         </Column>

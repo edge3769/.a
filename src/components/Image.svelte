@@ -2,7 +2,6 @@
     export let code
 
     import {placeholder} from 'placeholder'
-
     import {
         Row,
         Column,

@@ -8,10 +8,14 @@
         PaginationNav,
     } from 'carbon-components-svelte'
     import * as api from 'api'
+    import { onMount } from 'svelte'
     import {
         groupTags
     } from '../stores.js'
 
+    onMount(()=>{
+        ref.focus()
+    })
 
     let groups = []
     let page = 0
@@ -65,7 +69,6 @@
         let tagString = JSON.stringify($groupTags)
         let url = `groups?tags=${tagString}&visible=1&page=${page+1}`
         let res = await api.get(url)
-        console.log(res)
         groups = res.items
         total = res.total
         pages = res.pages

@@ -20,17 +20,8 @@
         Row
     } from 'carbon-components-svelte'
     import { stores } from '@sapper/app'
-    import { whose } from '../stores'
 
     let { session } = stores()
-
-    let change=()=>{
-        if($session.user.id==user.id){
-            $whose='my'
-        } else {
-            $whose='any'
-        }
-    }
 </script>
 
 <Row noGutter>

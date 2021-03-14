@@ -1,7 +1,7 @@
 <script>
   import { post } from 'utils.js'
   import { stores, goto } from '@sapper/app'
-  import { whose, logged } from '../stores.js'
+  import { logged } from '../stores.js'
   import {
     SkipToContent,
     SideNavItems,
@@ -17,10 +17,6 @@
   }
 
   let isSideNavOpen = false
-
-  let change=()=>{
-    $whose = 'my'
-  }
 
   let exit = async()=>{
     await post(`auth/exit`)
@@ -49,7 +45,7 @@
       <!-- <SideNavLink href='add_event' text='Add Event'/> -->
       <SideNavLink href='users' text='Users'/>
       <SideNavLink href='add_group' text='Add Group'/>
-      <SideNavLink on:click={change} href='groups/{$session.user.id}' text='My Groups'/>
+      <SideNavLink href='groups/{$session.user.id}' text='My Groups'/>
       <SideNavLink href='edit' text='Edit'/>
       <SideNavLink text='Exit' href='' on:click={exit} />
     {/if}

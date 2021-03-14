@@ -24,26 +24,15 @@
     import * as api from 'api'
 
     let name
-    let price
-    let description
     let nameInvalid
-    let itype = 'product'
 
     let token = user.token
-    let files = []
     let tags = []
     let current
     let code
-    let desc
     let open
     let tag
     let ref
-
-    $: if (!open) {
-        desc='Show Tags'
-    } else {
-        desc='Hide Tags'
-    }
 
     let clear = () => {
         tags = []
