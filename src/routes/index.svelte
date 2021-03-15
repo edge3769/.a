@@ -40,6 +40,11 @@
         }
     }
 
+    let go=async(id)=>{
+        api.put('users', {add: {form: 'group', id:id}})
+        goto(`group/${group.id}`)
+    }
+
     let searchF=()=>{
         current=ref
         if ($groupTags.length > 0){
@@ -113,7 +118,7 @@
     <br />
     <Row noGutter>
         <div>
-            <Link href='group/{group.id}'>{group.name}</Link>
+            <Link on:click={go(group.id)}>{group.name}</Link>
         </div>
     </Row>
 {/each}

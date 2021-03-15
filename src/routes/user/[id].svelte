@@ -4,11 +4,6 @@
         if(!user){
             this.redirect('302', 'enter')
         }
-        let group = await api.get(`groups/${id}`)
-        if(group.private && !group.users.contain(user.username)){
-            this.error('423', "You're not in this group")
-        }
-        id = group.socket_id
         return {user, id}
     }
 </script>
@@ -18,15 +13,18 @@
     import {
         Row,
         Column,
-        TextInput,
+        TextInput
     } from 'carbon-components-svelte'
-    import { goto } from '@sapper/app'
     import io from 'socket.io-client'
 
     const socket = io()
 
     let message
     let messages = []
+
+    socket.on('connect', ()=>{
+        user.socket_id = socket.id
+    })
 
     let keydown = (e) => {
         switch(e.keyCode){
@@ -35,22 +33,10 @@
         }
     }
 
-    socket.on('connect', async()=>{
-        let socket_id = socket.id
-        user.socket_id = socket_id
-        await api.put('users', {socket_id}, user.token)
-        socket.join(id)
-    })
-
-    let go=(id)=>{
-        api.put('users', {add: {form:user, id:id}}, user.token)
-        goto(`user/${id}`)
-    }
-
     let send=()=>{
         msgObj = {user: user.username, body: message}
         messages = [...messages, msgObj]
-        socket.to(id).emit('message', msgObj)
+        io.to(id).emit('message', msgObj)
         updateScroll()
         message=''
     }
@@ -69,7 +55,7 @@
     {#each messages as message}
         <Row>
             <Column>
-                <p on:click={go(message.user_id)} style='font-size: 3em;'>{message.user}</p>
+                <p style='font-size: 3em;'>{message.user}</p>
                 <p>{message.body}</p>            
             </Column>
         </Row>

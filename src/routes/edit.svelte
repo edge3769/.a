@@ -4,7 +4,7 @@
         if (!user){
             this.redirect(302, 'enter')
         }
-        user = await api.get(`user/${user.id}`)
+        user = await api.get(`users/${user.id}`)
         return {user}
     }
 </script>
@@ -13,6 +13,7 @@
     export let user
     import { goto, stores } from '@sapper/app';
     import {
+        InlineLoading,
         FluidForm,
         TextInput,
         Checkbox,
@@ -22,7 +23,6 @@
         Tag
     } from 'carbon-components-svelte'
     import Input from '../components/Input/Input.svelte'
-    import Image from '../components/Image.svelte'
 
     let { session } = stores();
 
@@ -34,9 +34,23 @@
     let usernameInvalid
     let usernameError
     let current
+    let userRes
     let open
     let tag
     let ref
+
+    $: promise=get(tags)
+    let get=async()=>{
+        loading=true
+        let tagString=JSON.stringify(tags)
+        userRes=await api.get(`users?tags=${tagString}`).then(r=>r.items[0].username)
+        if(userRes.items){
+            return userRes.items[0].username
+        }
+    }
+
+    get()
+    let promise = get()
 
     $: if (username === '') {
         usernameInvalid=true
@@ -94,6 +108,19 @@
 <svelte:head>
     <title>Edit</title>
 </svelte:head>
+
+{#if userRes}
+    <Row noGutter>
+        <Column>
+            <strong>Best match</strong>
+            {#await promise}
+                <span><InlineLoading /></span>
+            {:then userRes}
+                <p>{userRes}</p>
+            {/await}
+        </Column>
+    </Row>
+{/if}
 
 <Row noGutter>
     <Column>
