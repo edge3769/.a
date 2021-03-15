@@ -41,7 +41,6 @@
 
     $: promise=get(tags)
     let get=async()=>{
-        loading=true
         let tagString=JSON.stringify(tags)
         userRes=await api.get(`users?tags=${tagString}`).then(r=>r.items[0].username)
         if(userRes.items){

@@ -1,15 +1,17 @@
 <script context='module'>
+    import * as api from 'api'
     export async function preload({params}, {user}){
         let {id} = params
+        let {socket_id} = await api.get(`users/${id}`)
         if(!user){
             this.redirect('302', 'enter')
         }
-        return {user, id}
+        return {user, socket_id}
     }
 </script>
 
 <script>
-    export let user, id
+    export let user, socket_id
     import {
         Row,
         Column,
@@ -19,11 +21,15 @@
 
     const socket = io()
 
-    let message
     let messages = []
+    let message
 
-    socket.on('connect', ()=>{
-        user.socket_id = socket.id
+    socket.on('connect', async()=>{
+        user = await api.put('users', {socket_id: socket.id}, user.token)
+    })
+
+    socket.on('umsg', (msg)=>{
+        messages = [...messages, msg]
     })
 
     let keydown = (e) => {
@@ -34,29 +40,29 @@
     }
 
     let send=()=>{
-        msgObj = {user: user.username, body: message}
-        messages = [...messages, msgObj]
-        io.to(id).emit('message', msgObj)
+        let obj = {socket: socket_id, msg: message}
+        messages = [...messages, obj]
+        socket.emit('user', obj)
         updateScroll()
         message=''
     }
 
     let updateScroll=()=>{
-        let div = document.getElementById('div')
         setInterval(()=>{
-            div.scrollHeight=div.scrollTop
+            let div = document.getElementById('div')
+            div.scrollTop=div.scrollHeight
         }, 0)
     }
 </script>
 
 <svelte:window on:keydown={keydown} />
 
-<div id='div'>
+<div>
     {#each messages as message}
-        <Row>
+        <Row noGutter>
             <Column>
                 <p style='font-size: 3em;'>{message.user}</p>
-                <p>{message.body}</p>            
+                <p>{message.msg}</p>            
             </Column>
         </Row>
     {/each}

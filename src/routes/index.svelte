@@ -1,4 +1,14 @@
+<script context='module'> 
+    export async function preload({params}, {user}){
+        if(!user){
+            this.redirect('302', 'enter')
+        }
+        return {user}
+    }
+</script>
+
 <script>
+    export let user
     import {
         Tag,
         Row,
@@ -8,6 +18,7 @@
         PaginationNav,
     } from 'carbon-components-svelte'
     import * as api from 'api'
+    import { goto } from '@sapper/app'
     import { onMount } from 'svelte'
     import {
         groupTags
@@ -41,8 +52,8 @@
     }
 
     let go=async(id)=>{
-        api.put('users', {add: {form: 'group', id:id}})
-        goto(`group/${group.id}`)
+        user = await api.put('users', {add: {form: 'group', id:id}}, user.token)
+        goto(`group/${id}`)
     }
 
     let searchF=()=>{
@@ -118,13 +129,10 @@
     <br />
     <Row noGutter>
         <div>
-            <Link on:click={go(group.id)}>{group.name}</Link>
+            <Link href='' on:click={go(group.id)}>{group.name}</Link>
         </div>
     </Row>
 {/each}
-
-<!--08168080932 - Whatsapp
-    08032146531 - Normal -->
 
 {#if got && total < 1}
     <Row noGutter>

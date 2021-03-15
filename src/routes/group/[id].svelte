@@ -1,4 +1,5 @@
 <script context='module'>
+    import * as api from 'api'
     export async function preload({params}, {user}){
         let {id} = params
         if(!user){
@@ -36,29 +37,33 @@
     }
 
     socket.on('connect', async()=>{
-        let socket_id = socket.id
-        user.socket_id = socket_id
-        await api.put('users', {socket_id}, user.token)
-        socket.join(id)
+        console.log('connect')
+        await api.put('users', {add: {form:'group', id:id}})
+        socket.emit('join', id)
     })
 
-    let go=(id)=>{
-        api.put('users', {add: {form:user, id:id}}, user.token)
+    socket.on('gmsg', (obj)=>{
+        messages = [...messages, obj]
+    })
+
+    let go=async(id)=>{
+        console.log('id')
+        await api.put('users', {add: {form:'user', id:id}}, user.token)
         goto(`user/${id}`)
     }
 
     let send=()=>{
-        msgObj = {user: user.username, body: message}
-        messages = [...messages, msgObj]
-        socket.to(id).emit('message', msgObj)
+        let obj = {user: user.username, group: id, id: user.id, msg: message}
+        messages = [...messages, obj]
+        socket.emit('group', obj)
         updateScroll()
         message=''
     }
 
     let updateScroll=()=>{
-        let div = document.getElementById('div')
-        setInterval(()=>{
-            div.scrollHeight=div.scrollTop
+        const div = document.getElementById('div')
+        setTimeout(()=>{
+            div.scrollTop=div.scrollHeight
         }, 0)
     }
 </script>
@@ -67,10 +72,10 @@
 
 <div id='div'>
     {#each messages as message}
-        <Row>
+        <Row noGutter>
             <Column>
-                <p on:click={go(message.user_id)} style='font-size: 3em;'>{message.user}</p>
-                <p>{message.body}</p>            
+                <p on:click={go(message.id)} style='font-size: 0.75rem;'>{message.user}</p>
+                <p>{message.msg}</p>            
             </Column>
         </Row>
     {/each}
