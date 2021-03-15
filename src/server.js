@@ -40,9 +40,9 @@ io(server).on('connection', (socket)=>{
   socket.on('join', (id)=>{
     socket.join(id)
   })
-  
+
   socket.on('user', (obj)=>{
-    io.to(obj.socket).emit('umsg', obj.msg)
+    io.to(obj.id).emit('umsg', obj.msg)
   })
 
   socket.on('group', (obj)=>{

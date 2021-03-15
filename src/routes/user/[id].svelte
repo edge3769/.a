@@ -2,16 +2,16 @@
     import * as api from 'api'
     export async function preload({params}, {user}){
         let {id} = params
-        let {socket_id} = await api.get(`users/${id}`)
+        id = await api.get(`users/${id}`).then(r=>r.socket_id)
         if(!user){
             this.redirect('302', 'enter')
         }
-        return {user, socket_id}
+        return {user, id}
     }
 </script>
 
 <script>
-    export let user, socket_id
+    export let user, id
     import {
         Row,
         Column,
@@ -25,8 +25,7 @@
     let message
 
     socket.on('connect', async()=>{
-        console.log('c')
-        user = await api.put('users', {socket_id: socket.id}, user.token)
+        await api.put('users', {socket_id: socket.id}, user.token)
     })
 
     socket.on('umsg', (msg)=>{
@@ -41,7 +40,7 @@
     }
 
     let send=()=>{
-        let obj = {socket: socket_id, msg: message}
+        let obj = {id: id, msg: message}
         messages = [...messages, obj]
         socket.emit('user', obj)
         updateScroll()
@@ -62,8 +61,7 @@
     {#each messages as message}
         <Row noGutter>
             <Column>
-                <p style='font-size: 3em;'>{message.user}</p>
-                <p>{message.msg}</p>            
+                <p>{message.msg}</p>
             </Column>
         </Row>
     {/each}
