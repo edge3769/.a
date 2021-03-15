@@ -25,6 +25,7 @@
     let message
 
     socket.on('connect', async()=>{
+        console.log('c')
         user = await api.put('users', {socket_id: socket.id}, user.token)
     })
 
@@ -57,7 +58,7 @@
 
 <svelte:window on:keydown={keydown} />
 
-<div>
+<div id='div'>
     {#each messages as message}
         <Row noGutter>
             <Column>
@@ -68,7 +69,7 @@
     {/each}
 </div>
 
-<Row>
+<Row noGutter>
     <Column>
         <TextInput bind:value={message} />
     </Column>

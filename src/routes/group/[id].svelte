@@ -5,11 +5,10 @@
         if(!user){
             this.redirect('302', 'enter')
         }
-        let group = await api.get(`groups/${id}`)
-        if(group.private && !group.users.contain(user.username)){
-            this.error('423', "You're not in this group")
-        }
-        id = group.socket_id
+        // let group = await api.get(`groups/${id}`)
+        // if(group.private && !group.users.contain(user.username)){
+        //     this.error('423', "You're not in this group")
+        // }
         return {user, id}
     }
 </script>
@@ -38,7 +37,7 @@
 
     socket.on('connect', async()=>{
         console.log('connect')
-        await api.put('users', {add: {form:'group', id:id}})
+        await api.put('users', {add: {form:'group', id:id}}, user.token)
         socket.emit('join', id)
     })
 
@@ -46,10 +45,10 @@
         messages = [...messages, obj]
     })
 
-    let go=async(id)=>{
-        console.log('id')
-        await api.put('users', {add: {form:'user', id:id}}, user.token)
-        goto(`user/${id}`)
+    let go=async(uid)=>{
+        console.log(uid)
+        await api.put('users', {add: {form:'user', id:uid}}, user.token)
+        goto(`user/${uid}`)
     }
 
     let send=()=>{
@@ -74,14 +73,14 @@
     {#each messages as message}
         <Row noGutter>
             <Column>
-                <p on:click={go(message.id)} style='font-size: 0.75rem;'>{message.user}</p>
+                <p on:click={go(message.id)} style='color: grey; font-size: 0.75rem;'>{message.user}</p>
                 <p>{message.msg}</p>            
             </Column>
         </Row>
     {/each}
 </div>
 
-<Row>
+<Row noGutter>
     <Column>
         <TextInput bind:value={message} />
     </Column>

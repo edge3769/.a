@@ -1,4 +1,5 @@
 <script context='module'>
+    import * as api from 'api'
     export async function preload({params}, {user}){
         if(!user){
             this.redirect('302', 'enter')
@@ -17,11 +18,12 @@
         TextInput
     } from 'carbon-components-svelte'
 
-    let items
+    let items  =[]
+    $search = 'j'
     $: get($search)
 
     let get=async()=>{
-        items = await api.get(`get/${$search}`, user.token)
+        items = await api.get(`get?q=${$search}`, user.token).then(r=>r.items)
     }
 </script>
 
