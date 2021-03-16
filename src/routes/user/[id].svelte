@@ -3,6 +3,7 @@
     export async function preload({params}, {user}){
         let {id} = params
         id = await api.get(`users/${id}`).then(r=>r.socket_id)
+        console.log(id)
         if(!user){
             this.redirect('302', 'enter')
         }
@@ -18,7 +19,6 @@
         TextInput
     } from 'carbon-components-svelte'
     import io from 'socket.io-client'
-    import {onMount} from 'svelte'
 
     const socket = io()
 
@@ -26,15 +26,8 @@
     let message
     let ref
 
-    onMount(()=>{
-        ref.focus()
-    })
-
-    socket.on('connect', async()=>{
-        await api.put('users', {socket_id: socket.id}, user.token)
-    })
-
     socket.on('umsg', (msg)=>{
+        console.log()
         messages = [...messages, msg]
     })
 

@@ -26,14 +26,14 @@
     }
 </script>
 
-<Row>
+<Row noGutter>
     <Column>
         <TextInput bind:value={$search} />
     </Column>
 </Row>
 
 {#each items as item}
-    <Row>
+    <Row noGutter>
         <Column>
             <Link href='{item.form}/{item.id}' />
         </Column>

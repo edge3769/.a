@@ -30,10 +30,11 @@
         Search,
         Link,
         Tag,
-        Row,
-    } from 'carbon-components-svelte'
+        Row, } from 'carbon-components-svelte'
     import * as api from 'api'
     import { onMount } from 'svelte';
+    
+    let title = 'My Groups'; if(!$context) $context=title
 
     onMount(()=>{
         ref.focus()
@@ -68,7 +69,6 @@
         current=ref
         if ($myTags.length > 0){
             open=true
-            get()
         }
     }
 
@@ -103,7 +103,7 @@
 <svelte:window on:keydown={keydown} />
 
 <svelte:head>
-    <title>My Groups</title>
+    <title>{title}</title>
 </svelte:head>
 
 <Row noGutter>

@@ -62,7 +62,6 @@
         current=ref
         if ($groupTags.length > 0){
             open=true
-            get()
         }
     }
 

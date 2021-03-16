@@ -1,4 +1,5 @@
 <script context="module">
+    import fs from 'fs'
     import * as api from 'api.js';
     export async function preload({params}, { user }) {
         if (!user){
@@ -66,7 +67,8 @@
     let keydown = (e) => {
         switch(e.keyCode){
             case 13:
-                if (current==ref) addTag()
+                if (e.ctrlKey){ edit()
+                } else if (current==ref) addTag()
         }
     }
 

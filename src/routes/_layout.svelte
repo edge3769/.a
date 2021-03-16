@@ -5,11 +5,24 @@
     Content,
     Grid,
   } from "carbon-components-svelte";
+  import { stores } from '@sapper/app'
   import Header from "../components/Header.svelte";
   import Theme from "../components/Theme.svelte";
-import { isSideNavOpen } from "../stores";
+  import * as api from 'api'
+  import io from 'socket.io-client'
+  const socket = io()
   // import { isSideNavOpen } from '../stores.js'
   // import {onMount} from 'svelte'
+
+  let {session} = stores()
+
+  socket.on('connect', async()=>{
+    if($session.user.token){
+      console.log('cput')
+      console.log(socket.id)
+      await api.put('users', {socket_id: socket.id}, $session.user.token)
+    }
+  })
 
   let click=(e)=>{
     // console.log(e.target)

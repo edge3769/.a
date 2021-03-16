@@ -12,6 +12,7 @@
 
 <script>
     export let group, user
+    import {context} from '../../stores.js'
     import { goto } from '@sapper/app'
     import {
         FluidForm,
@@ -26,6 +27,9 @@
     } from 'carbon-components-svelte'
     import Image from '../../components/Image.svelte'
     import Input from '../../components/Input/Input.svelte'
+
+    let title = 'Edit Group'
+    if(!$context) $context=title
 
     let nameInvalid
 
@@ -104,7 +108,7 @@
 </Modal>
 
 <svelte:head>
-    <title>Edit Group</title>
+    <title>{title}</title>
 </svelte:head>
 
 <Image bind:code />

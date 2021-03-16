@@ -25,6 +25,9 @@
     import io from 'socket.io-client'
     import {onMount} from 'svelte'
 
+    let title = 'Group'
+    if(!$context) $context=title
+
     const socket = io()
 
     let messages = []
@@ -43,7 +46,6 @@
     }
 
     socket.on('connect', async()=>{
-        // console.log('connect')
         await api.put('users', {add: {form:'group', id:id}}, user.token)
         socket.emit('join', id)
     })
@@ -77,11 +79,15 @@
 
 <svelte:window on:keydown={keydown} />
 
-<div id='div'>
+<svelte:head>
+    <title>{title}</title>
+</svelte:head>
+
+<div style='height: 90%;' id='div'>
     {#each messages as message}
         <Row noGutter>
             <Column>
-                <p style='color: grey; font-size: 0.75rem;'>{message.user}</p>
+                <p on:click={go(message)} style='color: grey; font-size: 0.75rem;'>{message.user}</p>
                 <p>{message.msg}</p>            
             </Column>
         </Row>

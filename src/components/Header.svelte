@@ -31,7 +31,7 @@
 
 <Header 
   persistentHamburgerMenu={true}
-  company={$context}
+  company='x'
   platFormName=''
   bind:isSideNavOpen={$isSideNavOpen}
   href='/'
