@@ -18,11 +18,17 @@
         TextInput
     } from 'carbon-components-svelte'
     import io from 'socket.io-client'
+    import {onMount} from 'svelte'
 
     const socket = io()
 
     let messages = []
     let message
+    let ref
+
+    onMount(()=>{
+        ref.focus()
+    })
 
     socket.on('connect', async()=>{
         await api.put('users', {socket_id: socket.id}, user.token)
@@ -40,7 +46,7 @@
     }
 
     let send=()=>{
-        let obj = {id: id, msg: message}
+        let obj = {me: user.id, id: id, msg: message}
         messages = [...messages, obj]
         socket.emit('user', obj)
         updateScroll()
@@ -61,7 +67,11 @@
     {#each messages as message}
         <Row noGutter>
             <Column>
-                <p>{message.msg}</p>
+                {#if message.me == user.id}
+                    <p style='padding: 0.25rem; border-left: 3px solid aliceblue;'>{message.msg}</p>
+                {:else}
+                    <p style='padding: 0.25rem; border-left: 3px solid antiquewhite;'>{message.msg}</p>
+                {/if}
             </Column>
         </Row>
     {/each}
@@ -69,6 +79,6 @@
 
 <Row noGutter>
     <Column>
-        <TextInput bind:value={message} />
+        <TextInput bind:ref bind:value={message} />
     </Column>
 </Row>

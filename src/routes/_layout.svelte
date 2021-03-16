@@ -7,6 +7,15 @@
   } from "carbon-components-svelte";
   import Header from "../components/Header.svelte";
   import Theme from "../components/Theme.svelte";
+  // import { isSideNavOpen } from '../stores.js'
+  // import {onMount} from 'svelte'
+
+  // onMount(()=>{
+  //   document.getElementById('main-content')
+  //     .addEventListener('click', ()=>{
+  //       $isSideNavOpen = false
+  //   })
+  // })
 </script>
 
 <Theme persist theme="g10">

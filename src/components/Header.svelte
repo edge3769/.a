@@ -1,22 +1,22 @@
 <script>
   import { post } from 'utils.js'
   import { stores, goto } from '@sapper/app'
-  import { logged } from '../stores.js'
+  import SideNavLink from './SideNavLink.svelte'
+  import { isSideNavOpen, context, logged } from '../stores.js'
   import {
     SkipToContent,
     SideNavItems,
-    SideNavLink,
     SideNav,
     Header
   } from "carbon-components-svelte"
+
+  if (!$context) $context='Groups'
 
   let { session } = stores()
 
   if ($session.user){
     $logged = true
   }
-
-  let isSideNavOpen = false
 
   let exit = async()=>{
     await post(`auth/exit`)
@@ -28,9 +28,9 @@
 
 <Header 
   persistentHamburgerMenu={true}
-  company="Marketlinks"
+  company={$context}
   platFormName=''
-  bind:isSideNavOpen
+  bind:isSideNavOpen={$isSideNavOpen}
   href='/'
 >
   <div slot="skip-to-content">
@@ -38,7 +38,7 @@
   </div>
 </Header>
 
-<SideNav bind:isOpen={isSideNavOpen}>
+<SideNav bind:isOpen={$isSideNavOpen}>
   <SideNavItems>
     <!-- <SideNavLink href='events' text='Events'/> -->
     {#if $session.user && $logged}

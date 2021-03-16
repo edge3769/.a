@@ -21,6 +21,7 @@
     import { goto } from '@sapper/app'
     import { onMount } from 'svelte'
     import {
+        context,
         groupTags
     } from '../stores.js'
 
@@ -51,9 +52,10 @@
         }
     }
 
-    let go=async(id)=>{
-        user = await api.put('users', {add: {form: 'group', id:id}}, user.token)
-        goto(`group/${id}`)
+    let go=async(group)=>{
+        user = await api.put('users', {add: {form: 'group', id:group.id}}, user.token)
+        $context = group.name
+        goto(`group/${group.id}`)
     }
 
     let searchF=()=>{
@@ -130,7 +132,7 @@
     <br />
     <Row noGutter>
         <div>
-            <Link href='' on:click={go(group.id)}>{group.name}</Link>
+            <Link href='' on:click={go(group)}>{group.name}</Link>
         </div>
     </Row>
 {/each}

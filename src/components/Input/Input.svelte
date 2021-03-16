@@ -4,7 +4,7 @@
 
     export let value
     export let invalid
-    export let password
+    export let password = false
     export let labelText
     export let invalidText
 

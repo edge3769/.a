@@ -1,10 +1,13 @@
 {
+    "background-color": "white",
+    "start_url": "/",
+    "short_name": "x369",
     "display": "standalone",
     "name": "x369",
     "icons": [
         {
             "src": "placeholder.png",
-            "sizes": "192*192",
+            "sizes": "512x512",
             "type": "image/png"
         }
     ]

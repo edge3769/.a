@@ -15,6 +15,7 @@
 
 <script>
     export let user, id
+    import { context } from '../../stores.js'
     import {
         Row,
         Column,
@@ -22,11 +23,17 @@
     } from 'carbon-components-svelte'
     import { goto } from '@sapper/app'
     import io from 'socket.io-client'
+    import {onMount} from 'svelte'
 
     const socket = io()
 
-    let message
     let messages = []
+    let message
+    let ref
+
+    onMount(()=>{
+        ref.focus()
+    })
 
     let keydown = (e) => {
         switch(e.keyCode){
@@ -45,10 +52,11 @@
         messages = [...messages, obj]
     })
 
-    let go=async(uid)=>{
-        console.log(uid)
-        await api.put('users', {add: {form:'user', id:uid}}, user.token)
-        goto(`user/${uid}`)
+    let go=async(obj)=>{
+        console.log(obj.id)
+        $context = obj.user
+        await api.put('users', {add: {form:'user', id:obj.id}}, user.token)
+        goto(`user/${obj.id}`)
     }
 
     let send=()=>{
@@ -73,7 +81,7 @@
     {#each messages as message}
         <Row noGutter>
             <Column>
-                <p on:click={go(message.id)} style='color: grey; font-size: 0.75rem;'>{message.user}</p>
+                <p on:click={go(message)} style='color: grey; font-size: 0.75rem;'>{message.user}</p>
                 <p>{message.msg}</p>            
             </Column>
         </Row>
@@ -82,6 +90,6 @@
 
 <Row noGutter>
     <Column>
-        <TextInput bind:value={message} />
+        <TextInput bind:ref bind:value={message} />
     </Column>
 </Row>

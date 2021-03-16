@@ -19,7 +19,6 @@
     } from 'carbon-components-svelte'
 
     let items  =[]
-    $search = 'j'
     $: get($search)
 
     let get=async()=>{
