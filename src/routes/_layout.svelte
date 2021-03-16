@@ -7,16 +7,22 @@
   } from "carbon-components-svelte";
   import Header from "../components/Header.svelte";
   import Theme from "../components/Theme.svelte";
+import { isSideNavOpen } from "../stores";
   // import { isSideNavOpen } from '../stores.js'
   // import {onMount} from 'svelte'
 
-  // onMount(()=>{
-  //   document.getElementById('main-content')
-  //     .addEventListener('click', ()=>{
-  //       $isSideNavOpen = false
-  //   })
-  // })
+  let click=(e)=>{
+    // console.log(e.target)
+    // var nodeList = document.querySelectorAll('nav')
+    // for (var node of nodeList){
+    //   if (node != e.target){
+    //     $isSideNavOpen=false
+    //   }
+    // }   
+  }
 </script>
+
+<svelte:window on:click={click} />
 
 <Theme persist theme="g10">
   <Header segment="{segment}" />

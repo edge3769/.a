@@ -87,7 +87,7 @@
         let tagString = JSON.stringify($groupTags)
         let url = `groups?tags=${tagString}&visible=1&page=${page+1}`
         let res = await api.get(url)
-        console.log(res)
+        // console.log(res)
         groups = res.items
         total = res.total
         pages = res.pages

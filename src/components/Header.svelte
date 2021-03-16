@@ -10,7 +10,10 @@
     Header
   } from "carbon-components-svelte"
 
-  if (!$context) $context='Groups'
+  $isSideNavOpen = false
+
+
+  if (!$context || $context=='') $context='Groups'
 
   let { session } = stores()
 
@@ -44,7 +47,7 @@
     {#if $session.user && $logged}
       <!-- <SideNavLink href='add_event' text='Add Event'/> -->
       <SideNavLink href='chats' text='Chats'/>
-      <SideNavLink href='users' text='Users'/>
+      <!-- <SideNavLink href='users' text='Users'/> -->
       <SideNavLink href='add_group' text='Add Group'/>
       <SideNavLink href='groups/{$session.user.id}' text='My Groups'/>
       <SideNavLink href='edit' text='Edit'/>

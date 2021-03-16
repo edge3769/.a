@@ -43,7 +43,7 @@
     }
 
     socket.on('connect', async()=>{
-        console.log('connect')
+        // console.log('connect')
         await api.put('users', {add: {form:'group', id:id}}, user.token)
         socket.emit('join', id)
     })
@@ -53,7 +53,7 @@
     })
 
     let go=async(obj)=>{
-        console.log(obj.id)
+        // console.log(obj.id)
         $context = obj.user
         await api.put('users', {add: {form:'user', id:obj.id}}, user.token)
         goto(`user/${obj.id}`)
@@ -81,7 +81,7 @@
     {#each messages as message}
         <Row noGutter>
             <Column>
-                <p on:click={go(message)} style='color: grey; font-size: 0.75rem;'>{message.user}</p>
+                <p style='color: grey; font-size: 0.75rem;'>{message.user}</p>
                 <p>{message.msg}</p>            
             </Column>
         </Row>

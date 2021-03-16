@@ -10,9 +10,6 @@
         if (res == '404'){
             this.error(404, 'User not Found')
         }
-        if (res == '423'){
-            this.error(423, 'User not visible')
-        }
         return {groups, total, pages, user, id}
     }
 </script>
@@ -24,7 +21,8 @@
     export let user
     export let id
 
-    import { myTags } from '../../stores'
+    import { goto } from '@sapper/app'
+    import { context, myTags } from '../../stores'
     import {
         PaginationNav,
         Checkbox,
@@ -51,6 +49,11 @@
     let ref
 
     $: get($myTags, visible)
+
+    let go=(group)=>{
+        $context=group.name
+        goto(`group/${group.id}`)
+    }
 
     let keydown = (e) => {
         switch(e.keyCode){
@@ -141,7 +144,7 @@
     <br/>
     <Row noGutter>
         <div>
-            <Link href='group/{group.id}'>{group.name}</Link>
+            <Link on:click={go(group)} href=''>{group.name}</Link>
         </div>
     </Row>
 {/each}

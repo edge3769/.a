@@ -12,6 +12,8 @@ const FileStore = sessionFileStore(session);
 const { PORT, NODE_ENV } = process.env;
 const server = http.createServer()
 
+io = io(server)
+
 polka({server})
   .use(
     bodyParser.json(),
@@ -36,7 +38,7 @@ polka({server})
   )
   .listen(PORT)
 
-io(server).on('connection', (socket)=>{
+io.on('connection', (socket)=>{
   socket.on('join', (id)=>{
     socket.join(id)
   })
