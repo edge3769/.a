@@ -2,20 +2,20 @@
     export async function preload({params}, {user}){
         let {id} = params
         let tagString = JSON.stringify([])
-        let url = `groups?id=${id}&tags=${tagString}&page=1`
+        let url = `rooms?id=${id}&tags=${tagString}&page=1`
         let res = await api.get(url)
-        let groups = res.groups
+        let rooms = res.rooms
         let total = res.total
         let pages = res.pages
         if (res == '404'){
             this.error(404, 'User not Found')
         }
-        return {groups, total, pages, user, id}
+        return {rooms, total, pages, user, id}
     }
 </script>
 
 <script>
-    export let groups = []
+    export let rooms = []
     export let total = 0
     export let pages = 0
     export let user
@@ -34,8 +34,6 @@
     import * as api from 'api'
     import { onMount } from 'svelte';
     
-    let title = 'My Groups'; if(!$context) $context=title
-
     onMount(()=>{
         ref.focus()
     })
@@ -51,9 +49,11 @@
 
     $: get($myTags, visible)
 
-    let go=(group)=>{
-        $context=group.name
-        goto(`group/${group.id}`)
+    let go=async(room)=>{
+        socket.emit('join', room.id)
+        chats = {chats: [...user.chats, {form: 'room', id:room.id}]}
+        user = await api.put('users', chats, user.token)
+        goto(`room/${room.id}`)     
     }
 
     let keydown = (e) => {
@@ -65,7 +65,7 @@
         }
     }
 
-    let searchF=()=>{
+    let focused=()=>{
         current=ref
         if ($myTags.length > 0){
             open=true
@@ -91,9 +91,9 @@
 
     let get = async function(){
         let tagString = JSON.stringify($myTags)
-        let url = `groups?visible=${visible}&id=${id}&tags=${tagString}&page=${page+1}`
+        let url = `rooms?visible=${visible}&id=${id}&tags=${tagString}&page=${page+1}`
         let res = await api.get(url)
-        groups = res.items
+        rooms = res.items
         total = res.total
         pages = res.pages
         got = true
@@ -103,13 +103,13 @@
 <svelte:window on:keydown={keydown} />
 
 <svelte:head>
-    <title>{title}</title>
+    <title>My Rooms</title>
 </svelte:head>
 
 <Row noGutter>
     <Column noGutter>
         <Search
-            on:focus={searchF}
+            on:focus={focused}
             bind:value={tag}
             bind:ref
         />
@@ -140,11 +140,11 @@
     </Row>
 {/if}
 
-{#each groups as group}
+{#each rooms as room}
     <br/>
     <Row noGutter>
         <div>
-            <Link on:click={go(group)} href=''>{group.name}</Link>
+            <Link on:click={go(room)} href=''>{room.name}</Link>
         </div>
     </Row>
 {/each}

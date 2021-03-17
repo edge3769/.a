@@ -10,80 +10,45 @@
 <script>
     export let user
     import {
-        Tag,
         Row,
         Link,
-        Search,
         Column,
         PaginationNav,
     } from 'carbon-components-svelte'
+    import Tag from '../components/Tag.svelte'
     import * as api from 'api'
     import { goto } from '@sapper/app'
-    import { onMount } from 'svelte'
     import {
         context,
-        groupTags
+        roomTags
     } from '../stores.js'
+    import io from 'socket.io-client'
 
-    let groups = []
+    const socket = io()
+
+    let rooms = []
     let page = 0
     let total = 0
     let pages = 0
 
     let current
 
-    let open = false
     let got
-    let tag
     let ref
 
-    $: get($groupTags)
+    $: get($roomTags)
 
-    let keydown = (e) => {
-        switch(e.keyCode){
-            case 13:
-                if (current==ref){
-                    addTag()
-                }
-        }
-    }
-
-    let go=async(group)=>{
-        user = await api.put('users', {add: {form: 'group', id:group.id}}, user.token)
-        $context = group.name
-        goto(`group/${group.id}`)
-    }
-
-    let focused=()=>{
-        current=ref
-        if ($groupTags.length > 0){
-            open=true
-        }
-    }
-
-    let addTag = () => {
-        if (tag != '' && !$groupTags.includes(tag)){
-            $groupTags=[...$groupTags, tag]
-            open=true
-            tag=''
-        }
-    }
-
-    let delTag = (tag) => {
-        $groupTags=$groupTags.filter(t => t != tag)
-    }
-
-    let clear = () => {
-        $groupTags = []
-        open = false
+    let go=async(room)=>{
+        socket.emit('join', room.id)
+        user = await api.put('join', {id: room.id}, user.token)
+        goto(`room/${room.id}`)
     }
 
     let get = async function(){
-        let tagString = JSON.stringify($groupTags)
-        let url = `groups?tags=${tagString}&visible=1&page=${page+1}`
+        let tagString = JSON.stringify($roomTags)
+        let url = `rooms?tags=${tagString}&visible=1&page=${page+1}`
         let res = await api.get(url)
-        // console.log(res)
-        groups = res.items
+        rooms = res.items
         total = res.total
         pages = res.pages
         got = true
@@ -91,43 +56,17 @@
     }
 </script>
 
-<svelte:window on:keydown={keydown} />
-
 <svelte:head>
     <title>x369</title>
 </svelte:head>
 
-<Row noGutter>
-    <Column>
-        <Search
-            on:focus={focused}
-            bind:value={tag}
-            bind:ref
-        />
-    </Column>
-</Row>
+<Tag bind:tags={$roomTags} />
 
-{#if open}
-    <Row noGutter>
-        <Column>
-            <Tag
-                on:click={clear}
-                type='magenta'
-            >
-                Clear
-            </Tag>
-            {#each $groupTags as tag}
-                <Tag filter on:click={delTag(tag)}>{tag}</Tag>
-            {/each}
-        </Column>
-    </Row>
-{/if}
-
-{#each groups as group}
+{#each rooms as room}
     <br />
     <Row noGutter>
         <div>
-            <Link href='' on:click={go(group)}>{group.name}</Link>
+            <Link href='' on:click={go(room)}>{room.name}</Link>
         </div>
     </Row>
 {/each}

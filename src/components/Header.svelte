@@ -12,9 +12,6 @@
 
   $isSideNavOpen = false
 
-
-  if (!$context || $context=='') $context='Groups'
-
   let { session } = stores()
 
   if ($session.user){
@@ -44,8 +41,9 @@
 <SideNav bind:isOpen={$isSideNavOpen}>
   <SideNavItems>
     {#if $session.user && $logged}
-      <SideNavLink href='add_group' text='Add Group'/>
-      <SideNavLink href='groups/{$session.user.id}' text='My Groups'/>
+      <SideNavLink href='add_room' text='Add Room'/>
+      <SideNavLink href='rooms/{$session.user.id}' text='My Rooms'/>
+      <!-- <SideNavLink href='rooms' text='Rooms'/> -->
       <SideNavLink href='edit' text='Edit'/>
       <SideNavLink text='Exit' href='' on:click={exit} />
     {/if}

@@ -39,7 +39,7 @@
     }
 
     let send=()=>{
-        let obj = {me: user.id, id: id, msg: message}
+        let obj = {me: user.id, id: id, body: message}
         messages = [...messages, obj]
         socket.emit('user', obj)
         updateScroll()
@@ -61,9 +61,9 @@
         <Row noGutter>
             <Column>
                 {#if message.me == user.id}
-                    <p style='padding: 0.25rem; border-left: 3px solid aliceblue;'>{message.msg}</p>
+                    <p style='padding: 0.25rem; border-left: 3px solid aliceblue;'>{message.body}</p>
                 {:else}
-                    <p style='padding: 0.25rem; border-left: 3px solid antiquewhite;'>{message.msg}</p>
+                    <p style='padding: 0.25rem; border-left: 3px solid antiquewhite;'>{message.body}</p>
                 {/if}
             </Column>
         </Row>

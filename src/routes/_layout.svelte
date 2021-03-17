@@ -11,29 +11,64 @@
   import * as api from 'api'
   import io from 'socket.io-client'
   const socket = io()
-  // import { isSideNavOpen } from '../stores.js'
-  // import {onMount} from 'svelte'
 
   let {session} = stores()
 
+  function askNotificationPermission(){
+    function checkNotificationPromise(){
+      try {
+        Notification.requestPermission().then()
+      } catch(e){
+        return false
+      }
+      return true
+    }
+
+    async function handlePermission(permission){
+      if(Notification.permission==='denied' || Notification.permission==='default'){
+        $session.user = await api.put('users', {notifications: false}, $session.user.token)        
+      } else {
+        $session.user = await api.put('users', {notifications: true}, $session.user.token)        
+      } 
+    }
+
+    if((!'Notification' in window)){
+      return
+    } else {
+      if(checkNotificationPromise()){
+        Notification.requestPermission()
+        .then((permission)=>{
+          handlePermission(permission)
+        })
+      } else {
+        Notification.requestPermission(function(permission){
+          handlePermission(permission)
+        })
+      }
+    }
+  }
+
   socket.on('connect', async()=>{
     if($session.user){
-      await api.put('users', {socket_id: socket.id}, $session.user.token)
+      $session.user = await api.put('users', {socket_id: socket.id}, $session.user.token)
     }
   })
 
-  let click=(e)=>{
-    // console.log(e.target)
-    // var nodeList = document.querySelectorAll('nav')
-    // for (var node of nodeList){
-    //   if (node != e.target){
-    //     $isSideNavOpen=false
-    //   }
-    // }   
-  }
+  socket.on('notify', (obj)=>{
+    options = {
+      vibrate: [137],
+      renotify: true,
+      tag: 'new message',
+      icon: '/placeholder.png',
+      badge: '/placeholder.png',
+    }
+    var notification = new Notification('New message', options)
+    notification.onclick =(e)=>{
+      e.preventDefault()
+      goto('rooms')
+    }
+  })
 </script>
-
-<svelte:window on:click={click} />
 
 <Theme persist theme="g10">
   <Header segment="{segment}" />

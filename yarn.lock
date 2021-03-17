@@ -1199,7 +1199,7 @@ carbon-components-svelte@0.29.2:
     carbon-icons-svelte "^10.21.0"
     flatpickr "4.6.9"
 
-carbon-icons-svelte@^10.21.0:
+carbon-icons-svelte@^10.21.0, carbon-icons-svelte@^10.23.0:
   version "10.23.0"
   resolved "https://registry.yarnpkg.com/carbon-icons-svelte/-/carbon-icons-svelte-10.23.0.tgz#066a95e98c8c6ac592c920604241aa5f59b8ed52"
   integrity sha512-jjJXfCDF23QM9lFJDlwRFp6Z8Ar/atT167WNcUEJpn6h7soX1jk9Uexnr1/7GX2QtjhAvVl5S7wHZrPO7cLOrQ==

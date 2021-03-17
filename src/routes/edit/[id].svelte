@@ -5,13 +5,13 @@
             this.redirect(302, 'enter')
         }
         let {id} = params
-        let group = await api.get(`groups/${id}`)
-        return { group, user }
+        let room = await api.get(`rooms/${id}`)
+        return { room, user }
     }
 </script>
 
 <script>
-    export let group, user
+    export let room, user
     import {context} from '../../stores.js'
     import { goto } from '@sapper/app'
     import {
@@ -27,119 +27,60 @@
     } from 'carbon-components-svelte'
     import Input from '../../components/Input/Input.svelte'
 
-    let title = 'Edit Group'
-    if(!$context) $context=title
-
     let nameInvalid
 
-    let visible = group.visible
-    let name = group.name
-    let tags = group.tags
-    let current
+    let name = room.name
+    let tags = room.tags
+    let open = room.open
     let delOpen
-    let open
-    let ref
-    let tag
-
-    let clear = () => {
-        tags = []
-        open = false
-    }
-
-    let keydown = (e) => {
-        switch(e.keyCode){
-            case 13:
-                if (current==ref){
-                    addTag()
-                }
-        }
-    }
-
-    let addTag = () => {
-        if (tag != '' && !tags.includes(tag)){
-            tags = [...tags, tag]
-            open=true
-            tag=''
-        }
-    }
-
-    let delTag = (tag) => {
-        tags = tags.filter(t => t != tag)
-    }
 
     let del = async function(){
-        let res = await api.del(`groups/${group.id}`, user.token)
+        let res = await api.del(`rooms/${room.id}`, user.token)
         if (res.yes){
-            goto(`groups/${user.id}`)
+            goto(`rooms/${user.id}`)
         }
     }
 
     let edit = async function(){
         let data = {
-            id: group.id,
-            visible,
+            id: room.id,
             name,
+            open,
             tags,
         }
-        let res = await api.put('groups', data, user.token)
+        let res = await api.put('rooms', data, user.token)
         if (res.nameError) {
             nameInvalid = true
         }
         if (res.id){
-            goto(`group/${group.id}`)
+            $context=name
+            goto(`room/${room.id}`)
         }
     }
 </script>
 
-<svelte:window on:keydown={keydown} />
-
 <Modal
     bind:open={delOpen}
-    modalHeading='Delete group'
+    modalHeading='Delete room'
     primaryButtonText='Delete'
     secondaryButtonText='Cancel'
     on:click:button--secondary={() => (delOpen=false)}
     on:submit={del}
 >
-    <p>Sure you want to delete this group?</p>
+    <p>Sure you want to delete this room?</p>
 </Modal>
 
 <svelte:head>
-    <title>{title}</title>
+    <title>Edit Room</title>
 </svelte:head>
 
 <Row noGutter>
     <Column>
-        <Checkbox bind:checked={visible} labelText='Visible' />
+        <Checkbox bind:checked={open} labelText='Open' />
     </Column>
 </Row>
 
-<Row noGutter>
-    <Column noGutter>
-        <TextInput
-            on:focus={() => {open=true;current=ref}}
-            placeholder='Add tag'
-            bind:value={tag}
-            bind:ref
-        />
-    </Column>
-</Row>
-
-{#if open}
-    <Row noGutter>
-        <Column>
-            <Tag
-                on:click={clear}
-                type='magenta'
-            >
-                Clear
-            </Tag>
-            {#each tags as tag}
-                <Tag filter on:click={delTag(tag)}>{tag}</Tag>
-            {/each}
-        </Column>
-    </Row>
-{/if}
+<Tag bind:tags />
 
 <Row noGutter>
     <Column>
@@ -156,7 +97,7 @@
 
 <Row noGutter>
     <ButtonSet stacked>
-        <Button on:click={() => (delOpen=true)}>Delete Group</Button>
+        <Button on:click={() => (delOpen=true)}>Delete</Button>
         <Button on:click={edit}>Edit</Button>
     </ButtonSet>
 </Row>

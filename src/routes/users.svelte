@@ -40,15 +40,8 @@
     </Row>
 {/each}
 
-<!--08168080932 - Whatsapp
-    08032146531 - Normal -->
-
 {#if total < 1}
 <div>
     <p>There doesn't seem to be any result</p><!-- <p>There don't seem to be any results</p> -->
 </div>
 {/if}
-
-<!-- {#if total>10}
-    <PaginationNav loop bind:page bind:total={pages}/>
-{/if} -->

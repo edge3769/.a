@@ -42,11 +42,11 @@ io(server).on('connection', (socket)=>{
   })
 
   socket.on('user', (obj)=>{
-    io(server).to(obj.id).emit('umsg', obj.msg)
+    io(server).to(obj.id).emit('umsg', obj.body)
   })
 
-  socket.on('group', (obj)=>{
-    socket.to(obj.group).emit('gmsg', obj)
+  socket.on('room', (obj)=>{
+    socket.to(obj.room).emit('gmsg', obj)
   })
 
   socket.on('disconnect', ()=>{
