@@ -86,6 +86,8 @@
     <title>{title}</title>
 </svelte:head>
 
+<h2>{$context}</h2>
+
 <div style='height: 90%;' id='div'>
     {#each messages as message}
         <Row noGutter>
