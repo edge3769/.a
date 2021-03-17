@@ -58,6 +58,7 @@
     })
 
     let go=async(obj)=>{
+        // console.log(obj.id)
         $context = obj.user
         await api.put('users', {add: {form:'user', id:obj.id}}, user.token)
         goto(`user/${obj.id}`)

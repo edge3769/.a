@@ -43,7 +43,11 @@
 
 <SideNav bind:isOpen={$isSideNavOpen}>
   <SideNavItems>
+    <!-- <SideNavLink href='events' text='Events'/> -->
     {#if $session.user && $logged}
+      <!-- <SideNavLink href='add_event' text='Add Event'/> -->
+      <SideNavLink href='chats' text='Chats'/>
+      <!-- <SideNavLink href='users' text='Users'/> -->
       <SideNavLink href='add_group' text='Add Group'/>
       <SideNavLink href='groups/{$session.user.id}' text='My Groups'/>
       <SideNavLink href='edit' text='Edit'/>

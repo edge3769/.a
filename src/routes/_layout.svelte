@@ -18,11 +18,14 @@
 
   socket.on('connect', async()=>{
     if($session.user.token){
+      console.log('cput')
+      console.log(socket.id)
       await api.put('users', {socket_id: socket.id}, $session.user.token)
     }
   })
 
   let click=(e)=>{
+    // console.log(e.target)
     // var nodeList = document.querySelectorAll('nav')
     // for (var node of nodeList){
     //   if (node != e.target){
