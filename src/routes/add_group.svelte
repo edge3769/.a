@@ -22,10 +22,9 @@
     import { goto } from '@sapper/app'
     import * as api from 'api'
 
-    let name
     let nameInvalid
+    let name
 
-    let token = user.token
     let tags = []
     let current
     let open
@@ -63,7 +62,7 @@
             tags,
             name,
         }
-        let res = await api.post('groups', data, token)
+        let res = await api.post('groups', data, user.token)
         if (res.nameError) {
             nameInvalid = true
         }
