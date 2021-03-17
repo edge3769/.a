@@ -21,10 +21,6 @@
     } from 'carbon-components-svelte'
     import { goto } from '@sapper/app'
     import * as api from 'api'
-    import purify from 'dompurify';
-
-    $: name = purify.sanitize(name)
-    $: tag = purify.sanitize(tag)
 
     let name
     let nameInvalid

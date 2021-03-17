@@ -24,9 +24,6 @@
         context,
         groupTags
     } from '../stores.js'
-    import purify from 'dompurify';
-
-    $: tag = purify.sanitize(tag)
 
     let groups = []
     let page = 0

@@ -24,9 +24,6 @@
     import { goto } from '@sapper/app'
     import io from 'socket.io-client'
     import {onMount} from 'svelte'
-    import purify from 'dompurify';
-
-    $: message = purify.sanitize(message)
 
     let title = 'Group'
     if(!$context) $context=title
@@ -86,7 +83,12 @@
     <title>{title}</title>
 </svelte:head>
 
-<h2>{$context}</h2>
+<Row noGutter>
+    <Column>
+        <p class='head'>{$context}</p>
+        <div class='head-space'></div>
+    </Column>
+</Row>
 
 <div style='height: 90%;' id='div'>
     {#each messages as message}
@@ -104,3 +106,15 @@
         <TextInput bind:ref bind:value={message} />
     </Column>
 </Row>
+
+<style>
+    .head-space {
+        height: 0.5rem;
+    }
+    .head {
+        font-size: .875rem;
+        line-height: 1.125em;
+        font-weight: 600;
+        letter-spacing: .16px;
+    }
+</style>

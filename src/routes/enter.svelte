@@ -19,10 +19,6 @@
     import { goto, stores } from '@sapper/app';
     import { logged } from '../stores.js'
     import { post } from 'utils.js';
-import purify from 'dompurify';
-
-    $: username = purify.sanitize(username)
-    $: password = purify.sanitize(password)
 
     let { session } = stores();
     let usernameInvalid = false

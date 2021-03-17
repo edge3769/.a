@@ -24,10 +24,6 @@
         Tag
     } from 'carbon-components-svelte'
     import Input from '../components/Input/Input.svelte'
-    import purify from 'dompurify';
-
-    $: name = purify.sanitize(name)
-    $: tag = purify.sanitize(tag)
 
     let { session } = stores();
 

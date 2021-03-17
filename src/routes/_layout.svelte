@@ -17,9 +17,7 @@
   let {session} = stores()
 
   socket.on('connect', async()=>{
-    if($session.user.token){
-      console.log('cput')
-      console.log(socket.id)
+    if($session.user){
       await api.put('users', {socket_id: socket.id}, $session.user.token)
     }
   })

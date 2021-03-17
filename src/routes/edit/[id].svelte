@@ -26,7 +26,6 @@
         Tag
     } from 'carbon-components-svelte'
     import Input from '../../components/Input/Input.svelte'
-    import purify from 'dompurify';
 
     let title = 'Edit Group'
     if(!$context) $context=title
@@ -41,9 +40,6 @@
     let open
     let ref
     let tag
-
-    $: name = purify.sanitize(name)
-    $: tag = purify.sanitize(tag)
 
     let clear = () => {
         tags = []
