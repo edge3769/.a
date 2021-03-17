@@ -24,10 +24,9 @@
         context,
         groupTags
     } from '../stores.js'
+    import purify from 'dompurify';
 
-    onMount(()=>{
-        ref.focus()
-    })
+    $: tag = purify.sanitize(tag)
 
     let groups = []
     let page = 0
@@ -58,7 +57,7 @@
         goto(`group/${group.id}`)
     }
 
-    let searchF=()=>{
+    let focused=()=>{
         current=ref
         if ($groupTags.length > 0){
             open=true
@@ -103,7 +102,7 @@
 <Row noGutter>
     <Column>
         <Search
-            on:focus={searchF}
+            on:focus={focused}
             bind:value={tag}
             bind:ref
         />

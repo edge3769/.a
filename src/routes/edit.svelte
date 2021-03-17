@@ -24,6 +24,10 @@
         Tag
     } from 'carbon-components-svelte'
     import Input from '../components/Input/Input.svelte'
+    import purify from 'dompurify';
+
+    $: name = purify.sanitize(name)
+    $: tag = purify.sanitize(tag)
 
     let { session } = stores();
 
@@ -39,18 +43,6 @@
     let open
     let tag
     let ref
-
-    $: promise=get(tags)
-    let get=async()=>{
-        let tagString=JSON.stringify(tags)
-        userRes=await api.get(`users?tags=${tagString}`).then(r=>r.items[0].username)
-        if(userRes.items){
-            return userRes.items[0].username
-        }
-    }
-
-    get()
-    let promise = get()
 
     $: if (username === '') {
         usernameInvalid=true
@@ -109,19 +101,6 @@
 <svelte:head>
     <title>Edit</title>
 </svelte:head>
-
-{#if userRes}
-    <Row noGutter>
-        <Column>
-            <strong>Best match</strong>
-            {#await promise}
-                <span><InlineLoading /></span>
-            {:then userRes}
-                <p>{userRes}</p>
-            {/await}
-        </Column>
-    </Row>
-{/if}
 
 <Row noGutter>
     <Column>

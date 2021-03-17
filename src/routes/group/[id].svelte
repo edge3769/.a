@@ -24,6 +24,9 @@
     import { goto } from '@sapper/app'
     import io from 'socket.io-client'
     import {onMount} from 'svelte'
+    import purify from 'dompurify';
+
+    $: message = purify.sanitize(message)
 
     let title = 'Group'
     if(!$context) $context=title

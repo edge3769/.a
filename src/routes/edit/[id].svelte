@@ -25,8 +25,8 @@
         Row,
         Tag
     } from 'carbon-components-svelte'
-    import Image from '../../components/Image.svelte'
     import Input from '../../components/Input/Input.svelte'
+    import purify from 'dompurify';
 
     let title = 'Edit Group'
     if(!$context) $context=title
@@ -34,7 +34,6 @@
     let nameInvalid
 
     let visible = group.visible
-    let code = group.code
     let name = group.name
     let tags = group.tags
     let current
@@ -42,6 +41,9 @@
     let open
     let ref
     let tag
+
+    $: name = purify.sanitize(name)
+    $: tag = purify.sanitize(tag)
 
     let clear = () => {
         tags = []
@@ -79,7 +81,6 @@
     let edit = async function(){
         let data = {
             id: group.id,
-            code,
             visible,
             name,
             tags,
@@ -110,8 +111,6 @@
 <svelte:head>
     <title>{title}</title>
 </svelte:head>
-
-<Image bind:code />
 
 <Row noGutter>
     <Column>

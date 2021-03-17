@@ -1,6 +1,7 @@
 <script>
     import Invalid from './Invalid.svelte'
     import Valid from './Valid.svelte'
+    import purify from 'dompurify'
 
     export let value
     export let invalid
@@ -9,6 +10,8 @@
     export let invalidText
 
     let current = Valid
+
+    $: value = purify.sanitize(value)
 
     $: if (invalid==true) {
         current = Invalid

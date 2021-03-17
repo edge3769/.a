@@ -9,7 +9,6 @@
 
 <script>
     export let user
-    import Image from '../components/Image.svelte'
     import Input from '../components/Input/Input.svelte'
     import {
         Tag,
@@ -22,6 +21,10 @@
     } from 'carbon-components-svelte'
     import { goto } from '@sapper/app'
     import * as api from 'api'
+    import purify from 'dompurify';
+
+    $: name = purify.sanitize(name)
+    $: tag = purify.sanitize(tag)
 
     let name
     let nameInvalid
@@ -29,7 +32,6 @@
     let token = user.token
     let tags = []
     let current
-    let code
     let open
     let tag
     let ref
@@ -64,7 +66,6 @@
         let data = {
             tags,
             name,
-            code,
         }
         let res = await api.post('groups', data, token)
         if (res.nameError) {
@@ -81,8 +82,6 @@
 <svelte:head>
     <title>Add Group</title>
 </svelte:head>
-
-<Image bind:code />
 
 <Row noGutter>
     <Column noGutter>
