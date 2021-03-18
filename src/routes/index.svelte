@@ -65,9 +65,9 @@
 {#each rooms as room}
     <br />
     <Row noGutter>
-        <div>
+        <Column>
             <Link href='' on:click={go(room)}>{room.name}</Link>
-        </div>
+        </Column>
     </Row>
 {/each}
 

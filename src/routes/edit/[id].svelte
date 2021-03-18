@@ -17,8 +17,6 @@
     import {
         FluidForm,
         ButtonSet,
-        TextInput,
-        Checkbox,
         Column,
         Button,
         Modal,
@@ -31,7 +29,6 @@
 
     let name = room.name
     let tags = room.tags
-    let open = room.open
     let delOpen
 
     let del = async function(){
@@ -45,7 +42,6 @@
         let data = {
             id: room.id,
             name,
-            open,
             tags,
         }
         let res = await api.put('rooms', data, user.token)
@@ -73,12 +69,6 @@
 <svelte:head>
     <title>Edit Room</title>
 </svelte:head>
-
-<Row noGutter>
-    <Column>
-        <Checkbox bind:checked={open} labelText='Open' />
-    </Column>
-</Row>
 
 <Tag bind:tags />
 

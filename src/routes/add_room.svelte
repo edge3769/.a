@@ -24,16 +24,34 @@
     import * as api from 'api'
 
     let nameInvalid
+    let userInvalid
+    let username
+
+    $: if(!open) tags = null
+
+    $: if(process.browser && !(username === '')) {
+        let check = window.setTimeout(checkUser, 123)
+    }
+
+    const checkUser=async()=>{
+        let res = await api.get(`users/${username}`)
+        if(res.id){
+            userInvalid = false
+        } else {
+            userInvalid = true
+        }
+    }
     
     let open = true
     let name
     let tags
 
-    let add = async function() {
+    const add = async function() {
         let data = {
             open,
             tags,
-            name
+            name,
+            username
         }
         let res = await api.post('rooms', data, user.token)
         if (res.nameError) {
@@ -50,9 +68,15 @@
     <title>Add Room</title>
 </svelte:head>
 
-<Checkbox bind:checked={open} labelText='Open' />
+<Row noGutter>
+    <Column>
+        <Checkbox bind:checked={open} labelText='Open' />
+    </Column>
+</Row>
 
-<Tag bind:tags />
+{#if open}
+    <Tag bind:tags />
+{/if}
 
 <Row noGutter>
     <Column>
@@ -63,6 +87,14 @@
                 labelText="Name"
                 bind:value={name} 
             />
+            {#if !open}
+                <Input
+                    bind:invalid={userInvalid}
+                    invalidText='No user'
+                    labelText='Username'
+                    bind:value={username}
+                />
+            {/if}
         </FluidForm>
     </Column>
 </Row>

@@ -6,6 +6,7 @@
     Grid,
   } from "carbon-components-svelte";
   import { stores } from '@sapper/app'
+  import url8 from 'url8'
   import Header from "../components/Header.svelte";
   import Theme from "../components/Theme.svelte";
   import * as api from 'api'
@@ -13,6 +14,39 @@
   const socket = io()
 
   let {session} = stores()
+
+  let getSub=()=>{
+    navigator.serviceWorker.ready
+    .then((registration)=>{
+      return registration.pushManager.getSubscription()
+      .then(async(sub)=>{
+        if (sub){
+          return sub
+        }
+        vapidKey = await fetch(`get`).then(r=>url8(r.text()))
+        options = {
+          user_id: $session.user.id,
+          userVisibleOnly: true,
+          applicationServerKey: vapidKey
+        }
+        return registration.pushManager.subscribe(options)
+      })
+    }).then((sub)=>{
+      s = {subscription: sub}
+      body = JSON.stringify(s)
+      headers = {
+        'Content-type': 'application/json'
+      }
+      options = {
+        method: 'post',
+        headers: headers,
+        body: body
+      }
+      fetch(`register`, options)
+    })
+  }  
+
+  if($session.user && typeof window != 'undefined') getSub()
 
   function askNotificationPermission(){
     function checkNotificationPromise(){
@@ -69,6 +103,7 @@
     }
   })
 </script>
+
 
 <Theme persist theme="g10">
   <Header segment="{segment}" />

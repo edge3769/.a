@@ -1,10 +1,11 @@
 <script>
-    export let tags
+    export let tags = []
     import {
         Tag,
         Row,
         Search,
         Column,
+        TextInput
     } from 'carbon-components-svelte'
 
     let focused
@@ -52,7 +53,8 @@
 
 <Row noGutter>
     <Column>
-        <Search on:focus={focus} on:blur={blur} bind:value />
+        <TextInput placeholder='Add Tag' on:focus={focus} on:blur={blur} bind:value />
+        <slot />
     </Column>
 </Row>
 

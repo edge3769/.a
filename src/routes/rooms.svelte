@@ -4,7 +4,7 @@
         if(!user){
             this.redirect(302, 'enter')
         }
-        let {rooms, total, pages} = api.get('/xrooms', user.token)
+        let {rooms, total, pages} = await api.get('xrooms', user.token)
         return {rooms, pages, total, user}
     }
 </script>
@@ -15,7 +15,6 @@
         Row,
         Link,
         Column,
-        TextInput
     } from 'carbon-components-svelte'
     import {onMount} from 'svelte'
     import Tag from '../components/Tag.svelte'
@@ -47,9 +46,10 @@
 
 <div id='div'>
     {#each rooms as room}
-        <Row>
+        <br />
+        <Row noGutter>
             <Column>
-                <Link href='room/{room.id}' />
+                <Link href='room/{room.id}'>{room.name}</Link>
             </Column>
         </Row>
     {/each}

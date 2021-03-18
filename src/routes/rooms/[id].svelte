@@ -91,7 +91,7 @@
 
     let get = async function(){
         let tagString = JSON.stringify($myTags)
-        let url = `rooms?visible=${visible}&id=${id}&tags=${tagString}&page=${page+1}`
+        let url = `rooms?id=${id}&tags=${tagString}&page=${page+1}`
         let res = await api.get(url)
         rooms = res.items
         total = res.total
@@ -115,14 +115,6 @@
         />
     </Column>
 </Row>
-
-{#if user}
-    <Row noGutter>
-        <Column>
-            <Checkbox bind:checked={visible} labelText='Visible' />
-        </Column>
-    </Row>
-{/if}
 
 {#if open}
     <Row noGutter>

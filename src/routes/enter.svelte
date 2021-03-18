@@ -32,9 +32,16 @@
     let joinLoading
 
     let keydown = (e) => {
-        switch(e.keyCode){
-            case 13:
-                login()
+        if(e.ctrlKey){
+            switch(e.keyCode){
+                case 13:
+                    join()
+            }            
+        } else {
+            switch(e.keyCode){
+                case 13:
+                    login()
+            }
         }
     }
 
