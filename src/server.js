@@ -15,6 +15,7 @@ const { PORT, NODE_ENV, VAPID_PUBLIC, VAPID_PRIVATE } = process.env;
 const server = http.createServer()
 
 if(process.env.VAPID_PUBLIC && process.env.VAPID_PRIVATE){
+  console.log('yeet')
   webPush.setVapidDetails(
     'mailto:edge3769@gmail.com',
     process.env.VAPID_PUBLIC,
