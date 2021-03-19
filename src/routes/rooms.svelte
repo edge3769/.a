@@ -46,9 +46,15 @@
     {#each rooms as room}
         <br />
         <Row noGutter>
-            <Column>
-                <Link href='room/{room.id}'>{room.name}</Link>
-            </Column>
+            {#if room.unseen}
+                <Column>
+                    <Link style='font-weight: 600' href='room/{room.id}'>{room.name}</Link>
+                </Column>
+            {:else}
+                <Column>
+                    <Link href='room/{room.id}'>{room.name}</Link>
+                </Column>
+            {/if}
         </Row>
     {/each}
 </div>

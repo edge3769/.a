@@ -1,3 +1,4 @@
+import * as api from 'api'
 import 'dotenv/config'
 import io from 'socket.io';
 import sirv from "sirv";
@@ -47,6 +48,7 @@ polka({server})
   })
   .post('/send', (req, res)=>{
     //console.log('send')
+    let unseen = req.body.unseen
     let ids = req.body.ids
     //console.log('i', ids)
       let receivingSubs = subs.filter(s=>ids.includes(s.id))
@@ -55,8 +57,9 @@ polka({server})
       TTL: 5184000
     }
     for (let sub of receivingSubs){
-      //console.log('s', sub)
-      webPush.sendNotification(sub.subscription, null, options)
+      let json = {unseen: unseen}
+      let payload = JSON.stringify(json)
+      webPush.sendNotification(sub.subscription, payload, options)
     }
   })
   .use(
@@ -95,7 +98,8 @@ io(server).on('connection', (socket)=>{
       'Content-type': 'application/json'
     }
     let body = {
-      ids: obj.ids
+      ids: obj.ids,
+      unseen: obj.unseen
     }
     body = JSON.stringify(body)
     let options = {

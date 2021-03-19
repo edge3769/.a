@@ -7,7 +7,7 @@
         }
         let { items, page, total } = await api.get(`messages?id=${id}`)
         let messages = items
-        let room = await api.get(`rooms/${id}`)
+        let room = await api.get(`rooms/${id}`, user.token)
         let ids = await api.get(`idsinroom/${id}`).then(r=>r.ids)
         return {room, messages, page, total, user, ids, id}
     }
@@ -28,7 +28,9 @@
     $context = room.name
 
     onMount(()=>{
+        user = api.put(`in_room/${id}`, null, user.token)
         div = document.getElementById('div')
+        ref.focus()
     })
 
     const socket = io()
@@ -36,6 +38,10 @@
     let body
     let ref
     let div
+
+    let unload=async()=>{
+        await api.put(`left/${id}`, user.token)
+    }
 
     let keydown = (e) => {
         switch(e.keyCode){
@@ -62,7 +68,7 @@
 
     let send=async()=>{
         await api.put('messages', {id, body}, user.token)
-        let obj = {ids: ids, user: user.username, room: id, body}
+        let obj = {unseen: user.unseen, ids: ids, user: user.username, room: id, body}
         messages = [...messages, obj]
         socket.emit('room', obj)
         updateScroll()
@@ -76,7 +82,7 @@
     }
 </script>
 
-<svelte:window on:keydown={keydown} />
+<svelte:window on:unload={unload} on:keydown={keydown} />
 
 <svelte:head>
     <title>'Rooms'</title>

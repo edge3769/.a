@@ -47,7 +47,7 @@
     let get = async function(){
         let tagString = JSON.stringify($roomTags)
         let url = `rooms?tags=${tagString}&visible=1&page=${page+1}`
-        let res = await api.get(url)
+        let res = await api.get(url, user.token)
         rooms = res.items
         total = res.total
         pages = res.pages

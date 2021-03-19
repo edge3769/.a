@@ -12,9 +12,9 @@ let notifications = 0
 self.addEventListener('notificationclick', (ev)=>{
   ev.notification.close()
   ev.waitUntil(
-    clients.matchAll({type: 'window'})
-  ).then((clientList)=>{
-    for (let client of clientList){
+    self.clients.matchAll({type: 'window'})
+  ).then((clients)=>{
+    for (let client of clients){
       if(client.url == '/' && 'focus' in client){
         return client.focus()
       }
@@ -26,15 +26,21 @@ self.addEventListener('notificationclick', (ev)=>{
 })
 
 self.addEventListener('push', (ev)=>{
+  unseen = ev.data.json().unseen
   ev.waitUntil(
-    clients.matchAll({type: 'window'})
-    .then((clientList)=>{
-      for (let client of clientList){
+    self.clients.matchAll({type: 'window'})
+    .then((clients)=>{
+      for (let client of clients){
         if(client.focused){
           return
         }
+      image = caches.match('/placeholder.png')
+      options = {
+        badge: image,
+        icon: image
+      }
       notifications++
-      let title = `${notifications} ` + ((notifications > 1) ? 'New messages':'New message')
+      let title = `${notifications} ${(notifications > 1) ? 'New messages':'New message'} from ${unseen} rooms`
       self.registration.showNotification(title)
       }
     })
@@ -54,35 +60,6 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-  /*
-    self.registration.pushManager().getSubscription()
-    .then(async(s)=>{
-      if(s) subscription = s
-
-      await fetch('/vapidPublic').then(r=>{
-        options = {
-          user_id = user.id,
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(r.text())
-        }
-        self.registration.pushManager.subscribe(options).then((sub)=>{
-          subscription = sub
-        }).then(()=>{
-          s = {subscription: subscription}
-          body = JSON.stringify(s)
-          headers = {
-            'Content-type': 'application/json'
-          }
-          options = {
-            method: 'post',
-            headers: headers,
-            body: body
-          }
-          fetch('https://x369.live/register', options)
-        })
-      })
-    }),
-  */
     caches.keys().then(async (keys) => {
       // delete old caches
       for (const key of keys) {
