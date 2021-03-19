@@ -22,7 +22,7 @@ if(process.env.VAPID_PUBLIC && process.env.VAPID_PRIVATE){
   )
 }
 
-let subscriptions = []
+let subs = []
 
 const fetch = require('node-fetch')
 global.fetch = (url, opts) => {
@@ -33,9 +33,10 @@ global.fetch = (url, opts) => {
 polka({server})
   .use(bodyParser.json())
   .post('/register', (req, res)=>{
-    let sub = req.body.subscription
-    if(!subscriptions.includes(sub)){
-      subscriptions.push(sub)
+    let sub = req.body.sub
+    console.log('id', sub.id)
+    if(!subs.includes(sub)){
+      subs.push(sub)
     }
   })
   .get('/get', (req, res)=>{
@@ -47,15 +48,15 @@ polka({server})
   .post('/send', (req, res)=>{
     console.log('send')
     let ids = req.body.ids
-    console.log(ids)
-      let receivingSubscriptions = subscriptions.filter(s=>ids.includes(s.id))
-      console.log(receivingSubscriptions)
+    console.log('i', ids)
+      let receivingSubs = subs.filter(s=>ids.includes(s.id))
+      console.log('r', receivingSubs)
     const options = {
       TTL: 5184000
     }
-    for (subscription of receivingSubscriptions){
-      console.log(subscription)
-      webPush.sendNotification(subscription, null, options)
+    for (sub of receivingSubs){
+      console.log('s', sub)
+      webPush.sendNotification(sub.subscription, null, options)
     }
   })
   .use(

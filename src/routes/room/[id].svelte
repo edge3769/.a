@@ -9,7 +9,6 @@
         let messages = items
         let room = await api.get(`rooms/${id}`)
         let ids = await api.get(`idsinroom/${id}`).then(r=>r.ids)
-        console.log(ids)
         return {room, messages, page, total, user, ids, id}
     }
 </script>

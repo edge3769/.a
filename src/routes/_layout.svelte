@@ -16,6 +16,7 @@
   let {session} = stores()
 
   let getSub=()=>{
+    console.log('ui', $session.user.id)
     navigator.serviceWorker.ready
     .then((registration)=>{
       return registration.pushManager.getSubscription()
@@ -25,9 +26,9 @@
         }
         let res = await fetch(`get`)
         let vapidKey = await res.text()
-        console.log(vapidKey)
+        console.log('v', vapidKey)
+        console.log('ui', $session.user.id)
         let options = {
-          user_id: $session.user.id,
           userVisibleOnly: true,
           applicationServerKey: vapidKey
         }
@@ -40,7 +41,10 @@
           'Content-type': 'application/json'
         },
         body: JSON.stringify({
-          subscription: sub
+          sub: {
+            id: $session.user.id,
+            subscription: sub
+          }
         })
       })
     })

@@ -3,7 +3,6 @@
     export async function preload({params}, {user}){
         let {id} = params
         id = await api.get(`users/${id}`).then(r=>r.socket_id)
-        console.log(id)
         if(!user){
             this.redirect('302', 'enter')
         }
@@ -27,7 +26,6 @@
     let ref
 
     socket.on('umsg', (msg)=>{
-        console.log()
         messages = [...messages, msg]
     })
 
