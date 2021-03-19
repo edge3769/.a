@@ -16,7 +16,7 @@
   let {session} = stores()
 
   let getSub=()=>{
-    console.log('ui', $session.user.id)
+    //console.log('ui', $session.user.id)
     navigator.serviceWorker.ready
     .then((registration)=>{
       return registration.pushManager.getSubscription()
@@ -26,8 +26,8 @@
         }
         let res = await fetch(`get`)
         let vapidKey = await res.text()
-        console.log('v', vapidKey)
-        console.log('ui', $session.user.id)
+        //console.log('v', vapidKey)
+        //console.log('ui', $session.user.id)
         let options = {
           userVisibleOnly: true,
           applicationServerKey: vapidKey

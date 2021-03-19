@@ -34,7 +34,7 @@ polka({server})
   .use(bodyParser.json())
   .post('/register', (req, res)=>{
     let sub = req.body.sub
-    console.log('id', sub.id)
+    //console.log('id', sub.id)
     if(!subs.includes(sub)){
       subs.push(sub)
     }
@@ -46,16 +46,16 @@ polka({server})
     res.end(process.env.VAPID_PUBLIC)
   })
   .post('/send', (req, res)=>{
-    console.log('send')
+    //console.log('send')
     let ids = req.body.ids
-    console.log('i', ids)
+    //console.log('i', ids)
       let receivingSubs = subs.filter(s=>ids.includes(s.id))
-      console.log('r', receivingSubs)
+      //console.log('r', receivingSubs)
     const options = {
       TTL: 5184000
     }
-    for (sub of receivingSubs){
-      console.log('s', sub)
+    for (let sub of receivingSubs){
+      //console.log('s', sub)
       webPush.sendNotification(sub.subscription, null, options)
     }
   })

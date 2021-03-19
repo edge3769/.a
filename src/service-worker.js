@@ -34,8 +34,8 @@ self.addEventListener('push', (ev)=>{
           return
         }
       notifications++
-      title = `${notifications} ` + ((notifications > 1) ? 'New messages':'New message')
-      self.showNotification(title)
+      let title = `${notifications} ` + ((notifications > 1) ? 'New messages':'New message')
+      self.registration.showNotification(title)
       }
     })
   )

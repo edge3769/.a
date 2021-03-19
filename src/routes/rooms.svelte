@@ -27,8 +27,6 @@
         get()
     }
 
-    $: (tags)=>{console.log(1)}
-
     onMount(()=>{
         div = document.getElementById('div')
     })
