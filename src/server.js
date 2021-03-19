@@ -15,7 +15,6 @@ const { PORT, NODE_ENV, VAPID_PUBLIC, VAPID_PRIVATE } = process.env;
 const server = http.createServer()
 
 if(process.env.VAPID_PUBLIC && process.env.VAPID_PRIVATE){
-  console.log('yeet')
   webPush.setVapidDetails(
     'mailto:edge3769@gmail.com',
     process.env.VAPID_PUBLIC,
@@ -23,7 +22,7 @@ if(process.env.VAPID_PUBLIC && process.env.VAPID_PRIVATE){
   )
 }
 
-var subscriptions = []
+let subscriptions = []
 
 const fetch = require('node-fetch')
 global.fetch = (url, opts) => {
@@ -32,31 +31,34 @@ global.fetch = (url, opts) => {
 }
 
 polka({server})
+  .use(bodyParser.json())
+  .post('/register', (req, res)=>{
+    let sub = req.body.subscription
+    if(!subscriptions.includes(sub)){
+      subscriptions.push(sub)
+    }
+  })
   .get('/get', (req, res)=>{
     if(!process.env.VAPID_PUBLIC || !process.env.VAPID_PRIVATE){
-      console.log('vapid', webPush.generateVAPIDKeys())
       res.sendStatus(500)
     }
-    res.send(process.env.VAPID_PUBLIC)
+    res.end(process.env.VAPID_PUBLIC)
   })
-
   .post('/send', (req, res)=>{
+    console.log('send')
     let ids = req.body.ids
-      receivingSubscriptions = subscriptions.filter(s=>ids.includes(s.id))
+    console.log(ids)
+      let receivingSubscriptions = subscriptions.filter(s=>ids.includes(s.id))
+      console.log(receivingSubscriptions)
     const options = {
       TTL: 5184000
     }
     for (subscription of receivingSubscriptions){
+      console.log(subscription)
       webPush.sendNotification(subscription, null, options)
     }
   })
-
-  .post('/register', (req, res)=>{
-    subscriptions = [...subscriptions, req.body.subscription] 
-  })
-
   .use(
-    bodyParser.json(),
     session({
       secret: 'dev',
       resave: false,
@@ -92,15 +94,15 @@ io(server).on('connection', (socket)=>{
       'Content-type': 'application/json'
     }
     let body = {
-      ids: obj.ids,
-      payload: payload
+      ids: obj.ids
     }
+    body = JSON.stringify(body)
     let options = {
       method: 'post',
       headers: headers,
       body: body
     }
-    fetch('/send', options)
+    global.fetch('/send', options)
     socket.to(obj.room).emit('gmsg', obj)
   })
 

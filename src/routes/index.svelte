@@ -57,7 +57,7 @@
 </script>
 
 <svelte:head>
-    <title>x369</title>
+    <title>369</title>
 </svelte:head>
 
 <Tag bind:tags={$roomTags} />

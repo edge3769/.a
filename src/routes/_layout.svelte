@@ -23,8 +23,10 @@
         if (sub){
           return sub
         }
-        vapidKey = await fetch(`get`).then(r=>url8(r.text()))
-        options = {
+        let res = await fetch(`get`)
+        let vapidKey = await res.text()
+        console.log(vapidKey)
+        let options = {
           user_id: $session.user.id,
           userVisibleOnly: true,
           applicationServerKey: vapidKey
@@ -32,17 +34,15 @@
         return registration.pushManager.subscribe(options)
       })
     }).then((sub)=>{
-      s = {subscription: sub}
-      body = JSON.stringify(s)
-      headers = {
-        'Content-type': 'application/json'
-      }
-      options = {
+      fetch(`register`, {
         method: 'post',
-        headers: headers,
-        body: body
-      }
-      fetch(`register`, options)
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          subscription: sub
+        })
+      })
     })
   }  
 
