@@ -31,10 +31,7 @@
     let total = 0
     let pages = 0
 
-    let current
-
     let got
-    let ref
 
     $: get($roomTags)
 

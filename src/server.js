@@ -1,4 +1,4 @@
-import * as api from 'api'
+const { Sequelize } = require('sequelize')
 import 'dotenv/config'
 import io from 'socket.io';
 import sirv from "sirv";
@@ -14,6 +14,8 @@ const webPush = require('web-push')
 const FileStore = sessionFileStore(session);
 const { PORT, NODE_ENV, VAPID_PUBLIC, VAPID_PRIVATE } = process.env;
 const server = http.createServer()
+
+// const sequelize = new Sequelize
 
 if(process.env.VAPID_PUBLIC && process.env.VAPID_PRIVATE){
   webPush.setVapidDetails(
@@ -47,18 +49,19 @@ polka({server})
     res.end(process.env.VAPID_PUBLIC)
   })
   .post('/send', (req, res)=>{
-    //console.log('send')
+    console.log('send')
     let unseen = req.body.unseen
     let ids = req.body.ids
-    //console.log('i', ids)
+    console.log('i', ids)
       let receivingSubs = subs.filter(s=>ids.includes(s.id))
-      //console.log('r', receivingSubs)
+      // console.log('r', receivingSubs)
     const options = {
       TTL: 5184000
     }
     for (let sub of receivingSubs){
       let json = {unseen: unseen}
       let payload = JSON.stringify(json)
+      console.log('w')
       webPush.sendNotification(sub.subscription, payload, options)
     }
   })

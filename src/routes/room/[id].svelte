@@ -22,13 +22,16 @@
         Column,
         TextInput,
     } from 'carbon-components-svelte'
+    import { stores } from '@sapper/app'
     import io from 'socket.io-client'
     import { onMount } from 'svelte'
 
+    let { session } = stores()
+
     $context = room.name
 
-    onMount(()=>{
-        user = api.put(`in_room/${id}`, null, user.token)
+    onMount(async()=>{
+        $session.user = user = await api.put(`in_room/${id}`, null, user.token)
         div = document.getElementById('div')
         ref.focus()
     })
@@ -40,7 +43,7 @@
     let div
 
     let unload=async()=>{
-        await api.put(`left/${id}`, user.token)
+        $session.user = await api.put(`left/${id}`, user.token)
     }
 
     let keydown = (e) => {
@@ -50,8 +53,7 @@
         }
     }
 
-    socket.on('gmsg', (obj, fn)=>{
-        fn('res')
+    socket.on('gmsg', (obj)=>{
         messages = [...messages, obj]
     })
 

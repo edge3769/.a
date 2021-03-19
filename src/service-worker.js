@@ -18,30 +18,31 @@ self.addEventListener('notificationclick', (ev)=>{
       if(client.url == '/' && 'focus' in client){
         return client.focus()
       }
+    }
     if(clients.openWindow){
       return clients.openWindow('/rooms')
     }
-    }
+    notifications = 0
   })
 })
 
 self.addEventListener('push', (ev)=>{
-  unseen = ev.data.json().unseen
+  let unseen = ev.data.json().unseen
   ev.waitUntil(
     self.clients.matchAll({type: 'window'})
-    .then((clients)=>{
+    .then(async(clients)=>{
       for (let client of clients){
         if(client.focused){
           return
         }
-      image = caches.match('/placeholder.png')
-      options = {
+      let image = await caches.match('/placeholder.png')
+      let options = {
         badge: image,
         icon: image
       }
       notifications++
-      let title = `${notifications} ${(notifications > 1) ? 'New messages':'New message'} from ${unseen} rooms`
-      self.registration.showNotification(title)
+      let title = `${notifications} ${(notifications > 1) ? 'New messages':'New message'}` //from ${unseen} rooms`
+      self.registration.showNotification(title, options)
       }
     })
   )
