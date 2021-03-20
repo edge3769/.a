@@ -40,7 +40,7 @@ polka({server})
     }
     res.end(process.env.VAPID_PUBLIC)
   })
-  .post('/send', async(req, res)=>{
+  .put('/send', async(req, res)=>{
     let id = req.body.id
     let {subs} = await api.get(`subs/${id}`)
     const options = {
@@ -77,27 +77,17 @@ polka({server})
 io(server).on('connection', (socket)=>{
   socket.on('join', (id)=>{
     socket.join(id)
+    console.log('j', id, socket.id)
   })
 
-  socket.on('user', (obj)=>{
-    io(server).to(obj.id).emit('umsg', obj.value)
-  })
-
-  socket.on('room', (obj)=>{
-    let headers = {
-      'Content-type': 'application/json'
-    }
-    let body = JSON.stringify({id: obj.id})
-    let options = {
-      method: 'post',
-      headers: headers,
-      body: body
-    }
-    socket.in(obj.id).emit('gmsg', obj)
-    // global.fetch('/send', options)
-  })
-
-  socket.on('disconnect', ()=>{
-    socket.broadcast.emit('left', socket.id)
+  socket.on('msg', (obj)=>{
+    socket.to(obj.id).emit('msg', obj)
+    global.fetch('/send', {
+      methods: 'put',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({'id': obj.id})
+    })
   })
 })

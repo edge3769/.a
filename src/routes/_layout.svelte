@@ -5,15 +5,13 @@
     Content,
     Grid,
   } from "carbon-components-svelte";
-  import { stores } from '@sapper/app'
   import url8 from 'url8'
   import Header from "../components/Header.svelte";
   import Theme from "../components/Theme.svelte";
+  import {stores} from '@sapper/app'
   import * as api from 'api'
-  import io from 'socket.io-client'
-  const socket = io()
 
-  let {session} = stores()
+  const {session} = stores()
 
   let getSub=()=>{
     navigator.serviceWorker.ready
@@ -24,7 +22,7 @@
           return sub
         }
         let res = await fetch(`get`)
-        let vapidKey = await res.text()
+        let vapidKey = await url8(res.text())
         let options = {
           userVisibleOnly: true,
           applicationServerKey: vapidKey
@@ -32,18 +30,7 @@
         return registration.pushManager.subscribe(options)
       })
     }).then((sub)=>{
-      fetch(`register`, {
-        method: 'post',
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify({
-          sub: {
-            id: $session.user.id,
-            subscription: sub
-          }
-        })
-      })
+      api.post('subs', {id: $session.user.id, sub})
     })
   }  
 

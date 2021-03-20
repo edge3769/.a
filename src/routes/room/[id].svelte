@@ -5,43 +5,32 @@
         if(!user){
             this.redirect('302', 'enter')
         }
-        let { items, page, total } = await api.get(`messages?id=${id}`)
+        let { items } = await api.get(`messages?id=${id}`)
         let room = await api.get(`rooms/${id}`, user.token)
-        return {room, items, page, total, user, id}
+        return {room, items, user, id}
     }
 </script>
 
 <script>
-    export let room, items, page, total, user, id
+    export let room, items, user, id
     import { context } from '../../stores.js'
     import {
         Row,
         Column,
         TextInput,
     } from 'carbon-components-svelte'
-    import { stores } from '@sapper/app'
     import io from 'socket.io-client'
-    import { onMount } from 'svelte'
-
-    let { session } = stores()
 
     $context = room.name
 
-    onMount(async()=>{
-        $session.user = user = await api.put(`in_room/${id}`, null, user.token)
-        div = document.getElementById('div')
-        ref.focus()
-    })
-
     const socket = io()
+    socket.on('connect', ()=>{
+        socket.emit('join', id)
+        console.log('sr', socket.id, socket.rooms)
+    })
 
     let value
     let ref
-    let div
-
-    let unload=async()=>{
-        $session.user = await api.put(`left/${id}`, user.token)
-    }
 
     let keydown = (e) => {
         switch(e.keyCode){
@@ -50,38 +39,29 @@
         }
     }
 
-    socket.on('gmsg', (obj)=>{
+    socket.on('msg', (obj)=>{
         items = [...items, obj]
+        updateScroll()
     })
 
-    // $: if(total > 100 && div.scrollTop == 0){
-    //     page++
-    //     get()
-    // }
-
-    let get=async()=>{
-        let res = await api.get(`/messages?id=${id}&page=${page}`)
-        items = res.items
-        total = res.total
-    }
-
     let send=async()=>{
-        await api.put('messages', {id, value}, user.token)
+        // await api.put('messages', {id, value}, user.token)
         let obj = {user: user.username, id, value}
         items = [...items, obj]
-        socket.emit('room', obj)
+        socket.emit('msg', obj)
         updateScroll()
         value=''
     }
 
     let updateScroll=()=>{
         setTimeout(()=>{
+            let div = document.getElementById('div')
             div.scrollTop=div.scrollHeight
         }, 0)
     }
 </script>
 
-<svelte:window on:unload={unload} on:keydown={keydown} />
+<svelte:window on:keydown={keydown} />
 
 <svelte:head>
     <title>'Rooms'</title>
@@ -99,7 +79,7 @@
         <Row noGutter>
             <Column>
                 <p style='color: grey; font-size: 0.75rem;'>{item.user}</p>
-                <p>{item.body}</p>            
+                <p>{item.value}</p>            
             </Column>
         </Row>
     {/each}

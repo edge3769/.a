@@ -19,7 +19,6 @@
     import * as api from 'api'
     import { goto } from '@sapper/app'
     import {
-        context,
         roomTags
     } from '../stores.js'
     import io from 'socket.io-client'
@@ -36,8 +35,7 @@
     $: get($roomTags)
 
     let go=async(room)=>{
-        socket.emit('join', room.id)
-        user = await api.put('join', {id: room.id}, user.token)
+        await api.put('join', {id: room.id}, user.token)
         goto(`room/${room.id}`)
     }
 
