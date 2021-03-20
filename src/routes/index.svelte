@@ -21,9 +21,6 @@
     import {
         roomTags
     } from '../stores.js'
-    import io from 'socket.io-client'
-
-    const socket = io()
 
     let rooms = []
     let page = 0

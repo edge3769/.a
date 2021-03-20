@@ -5,14 +5,14 @@
         if(!user){
             this.redirect('302', 'enter')
         }
-        let { items } = await api.get(`messages?id=${id}`)
+        let { items, page, total } = await api.get(`messages?id=${id}`)
         let room = await api.get(`rooms/${id}`, user.token)
-        return {room, items, user, id}
+        return {room, items, page, total, user, id}
     }
 </script>
 
 <script>
-    export let room, items, user, id
+    export let room, items, page, total, user, id
     import { context } from '../../stores.js'
     import {
         Row,
@@ -22,6 +22,11 @@
     import io from 'socket.io-client'
 
     $context = room.name
+
+    $: if(total > 100 && window.scrollTop==window.scrollHeight){
+        page++
+        get()
+    }
 
     const socket = io()
     socket.on('connect', ()=>{
@@ -45,18 +50,19 @@
     })
 
     let send=async()=>{
-        // await api.put('messages', {id, value}, user.token)
+        if(!value) return
+        // value=value.trim()
+        await api.put('messages', {id, value}, user.token).then(
+            ()=>updateScroll())
         let obj = {user: user.username, id, value}
         items = [...items, obj]
         socket.emit('msg', obj)
-        updateScroll()
         value=''
     }
 
     let updateScroll=()=>{
-        setTimeout(()=>{
-            let div = document.getElementById('div')
-            div.scrollTop=div.scrollHeight
+        setInterval(()=>{
+            window.scrollTo(window.scrollHeight)
         }, 0)
     }
 </script>
@@ -74,16 +80,14 @@
     </Column>
 </Row>
 
-<div style='height: 90%;' id='div'>
-    {#each items as item}
-        <Row noGutter>
-            <Column>
-                <p style='color: grey; font-size: 0.75rem;'>{item.user}</p>
-                <p>{item.value}</p>            
-            </Column>
-        </Row>
-    {/each}
-</div>
+{#each items as item}
+    <Row noGutter>
+        <Column>
+            <p style='color: grey; font-size: 0.75rem;'>{item.user}</p>
+            <p>{item.value}</p>            
+        </Column>
+    </Row>
+{/each}
 
 <Row noGutter>
     <Column>

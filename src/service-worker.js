@@ -24,6 +24,7 @@ self.addEventListener('notificationclick', (ev)=>{
       return clients.openWindow('/rooms')
     }
     notifications = 0
+    ids=[]
   })
 })
 
@@ -33,11 +34,11 @@ self.addEventListener('push', (ev)=>{
     .then(async(clients)=>{
       let id = ev.data.json().id
       if(!ids.includes(id)) ids.push(id)
-      for (let client of clients){
-        if(client.focused){
-          return
-        }
-      }
+      // for (let client of clients){
+      //   if(client.focused){
+      //     return
+      //   }
+      // }
       let image = await caches.match('/placeholder.png')
       let options = {
         badge: image,

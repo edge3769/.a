@@ -22,7 +22,7 @@
     let tags
     let div
 
-    $: if(total > 100 && div.scrollTop==div.scrollHeight){
+    $: if(div && total > 100 && div.scrollTop==div.scrollHeight){
         page++
         get()
     }

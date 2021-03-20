@@ -21,8 +21,11 @@
         if (sub){
           return sub
         }
-        let res = await fetch(`get`)
-        let vapidKey = await url8(res.text())
+        let vapidKey = await fetch(`get`).then(async(r)=>{
+          r = await r.text()
+          r = url8(r)
+          return r
+        })
         let options = {
           userVisibleOnly: true,
           applicationServerKey: vapidKey
@@ -35,61 +38,6 @@
   }  
 
   if($session.user && typeof window != 'undefined') getSub()
-
-  function askNotificationPermission(){
-    function checkNotificationPromise(){
-      try {
-        Notification.requestPermission().then()
-      } catch(e){
-        return false
-      }
-      return true
-    }
-
-    async function handlePermission(permission){
-      if(Notification.permission==='denied' || Notification.permission==='default'){
-        $session.user = await api.put('users', {notifications: false}, $session.user.token)        
-      } else {
-        $session.user = await api.put('users', {notifications: true}, $session.user.token)        
-      } 
-    }
-
-    if((!'Notification' in window)){
-      return
-    } else {
-      if(checkNotificationPromise()){
-        Notification.requestPermission()
-        .then((permission)=>{
-          handlePermission(permission)
-        })
-      } else {
-        Notification.requestPermission(function(permission){
-          handlePermission(permission)
-        })
-      }
-    }
-  }
-
-  socket.on('connect', async()=>{
-    if($session.user){
-      $session.user = await api.put('users', {socket_id: socket.id}, $session.user.token)
-    }
-  })
-
-  socket.on('notify', (obj)=>{
-    options = {
-      vibrate: [137],
-      renotify: true,
-      tag: 'new message',
-      icon: '/placeholder.png',
-      badge: '/placeholder.png',
-    }
-    var notification = new Notification('New message', options)
-    notification.onclick =(e)=>{
-      e.preventDefault()
-      goto('rooms')
-    }
-  })
 </script>
 
 

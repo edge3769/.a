@@ -24,8 +24,6 @@ if(process.env.VAPID_PUBLIC && process.env.VAPID_PRIVATE){
   )
 }
 
-let subs = []
-
 const fetch = require('node-fetch')
 global.fetch = (url, opts) => {
   if(url[0]=='/') url = `http://localhost:${PORT}${url}`
@@ -77,13 +75,12 @@ polka({server})
 io(server).on('connection', (socket)=>{
   socket.on('join', (id)=>{
     socket.join(id)
-    console.log('j', id, socket.id)
   })
 
   socket.on('msg', (obj)=>{
     socket.to(obj.id).emit('msg', obj)
     global.fetch('/send', {
-      methods: 'put',
+      method: 'put',
       headers: {
         'Content-type': 'application/json'
       },
