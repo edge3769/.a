@@ -1,13 +1,12 @@
 {
-    "background-color": "white",
+    "background-color": "f4f4f4",
     "start_url": "/",
-    "short_name": "x369",
-    "display": "standalone",
+    "display": "fullscreen",
     "name": "x369",
     "icons": [
         {
             "src": "placeholder.png",
-            "sizes": "512x512",
+            "sizes": "256x256",
             "type": "image/png"
         }
     ]

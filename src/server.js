@@ -1,4 +1,4 @@
-const { Sequelize } = require('sequelize')
+import * as api from './node_modules/api'
 import 'dotenv/config'
 import io from 'socket.io';
 import sirv from "sirv";
@@ -15,17 +15,13 @@ const FileStore = sessionFileStore(session);
 const { PORT, NODE_ENV, VAPID_PUBLIC, VAPID_PRIVATE } = process.env;
 const server = http.createServer()
 
-// const sequelize = new Sequelize
-
-if(process.env.VAPID_PUBLIC && process.env.VAPID_PRIVATE){
+if(VAPID_PUBLIC && VAPID_PRIVATE){
   webPush.setVapidDetails(
     'mailto:edge3769@gmail.com',
-    process.env.VAPID_PUBLIC,
-    process.env.VAPID_PRIVATE
+    VAPID_PUBLIC,
+    VAPID_PRIVATE
   )
 }
-
-let subs = []
 
 const fetch = require('node-fetch')
 global.fetch = (url, opts) => {
@@ -35,36 +31,30 @@ global.fetch = (url, opts) => {
 
 polka({server})
   .use(bodyParser.json())
-  .post('/register', (req, res)=>{
-    let sub = req.body.sub
-    //console.log('id', sub.id)
-    if(!subs.includes(sub)){
-      subs.push(sub)
-    }
-  })
+
   .get('/get', (req, res)=>{
-    if(!process.env.VAPID_PUBLIC || !process.env.VAPID_PRIVATE){
+    if(!VAPID_PUBLIC || !VAPID_PRIVATE){
       res.sendStatus(500)
     }
-    res.end(process.env.VAPID_PUBLIC)
+    res.end(VAPID_PUBLIC)
   })
-  .post('/send', (req, res)=>{
-    console.log('send')
-    let unseen = req.body.unseen
-    let ids = req.body.ids
-    console.log('i', ids)
-      let receivingSubs = subs.filter(s=>ids.includes(s.id))
-      // console.log('r', receivingSubs)
+
+  .post('/send', async(req, res)=>{
+    console.log('sw')
+    let id = req.body.id
+    let {subs} = await api.get(`subs/${id}`)
+    console.log(subs)
     const options = {
       TTL: 5184000
     }
-    for (let sub of receivingSubs){
-      let json = {unseen: unseen}
+    for (let sub of subs){
+      let json = {id: id}
       let payload = JSON.stringify(json)
       console.log('w')
-      webPush.sendNotification(sub.subscription, payload, options)
+      webPush.sendNotification(sub, payload, options)
     }
   })
+
   .use(
     session({
       secret: 'dev',
@@ -96,22 +86,26 @@ io(server).on('connection', (socket)=>{
     io(server).to(obj.id).emit('umsg', obj.body)
   })
 
-  socket.on('room', (obj)=>{
-    let headers = {
-      'Content-type': 'application/json'
-    }
-    let body = {
-      ids: obj.ids,
-      unseen: obj.unseen
-    }
-    body = JSON.stringify(body)
-    let options = {
-      method: 'post',
-      headers: headers,
-      body: body
-    }
-    global.fetch('/send', options)
+  socket.on('room', (obj, callback)=>{
+    callback({
+      status: 'received'
+    })
     socket.to(obj.room).emit('gmsg', obj)
+    // console.log('Server got room ', obj.room)
+    // let headers = {
+    //   'Content-type': 'application/json'
+    // }
+    // let body = {
+    //   id: obj.room,
+    //   unseen: obj.unseen
+    // }
+    // body = JSON.stringify(body)
+    // let options = {
+    //   method: 'post',
+    //   headers: headers,
+    //   body: body
+    // }
+    // await global.fetch('/send', options)
   })
 
   socket.on('disconnect', ()=>{

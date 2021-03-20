@@ -8,42 +8,34 @@
         let { items, page, total } = await api.get(`messages?id=${id}`)
         let messages = items
         let room = await api.get(`rooms/${id}`, user.token)
-        let ids = await api.get(`idsinroom/${id}`).then(r=>r.ids)
-        return {room, messages, page, total, user, ids, id}
+        return {room, messages, page, total, user, id}
     }
 </script>
 
 <script>
-    export let room, messages, page, total, user, ids, id
+    export let room, messages, page, total, user, id
     import { context } from '../../stores.js'
     import {
         Row,
-        Button,
         Column,
         TextInput,
     } from 'carbon-components-svelte'
-    import { stores } from '@sapper/app'
     import io from 'socket.io-client'
     import { onMount } from 'svelte'
 
-    let { session } = stores()
-
-    $context = room.name
-
-    onMount(async()=>{
-        $session.user = user = await api.put(`in_room/${id}`, null, user.token)
-        div = document.getElementById('div')
-        ref.focus()
-    })
-
     const socket = io()
-
+    $context = room.name
     let body
     let ref
-    let div
+
+    socket.emit('join', room.id)
+    
+    onMount(async()=>{
+        await api.put(`in_room/${id}`, null, user.token)
+    })
 
     let unload=async()=>{
-        $session.user = await api.put(`left/${id}`, user.token)
+        await api.put(`left/${id}`, user.token)
     }
 
     let keydown = (e) => {
@@ -52,15 +44,21 @@
                 send()
         }
     }
-
-    socket.on('gmsg', (obj)=>{
-        messages = [...messages, obj]
+        
+    socket.on('connect', ()=>{
+        console.log(id, socket.id)
     })
 
-    $: if(total > 100 && div.scrollTop == 0){
-        page++
-        get()
-    }
+    socket.on('gmsg', (obj)=>{
+        console.log('gmsg')
+        messages = [...messages, obj]
+        updateScroll()
+    })
+
+    // $: if(total > 100 && document.body.scrollTop == 0){
+    //     page++
+    //     get()
+    // }
 
     let get=async()=>{
         let res = await api.get(`/messages?id=${id}&page=${page}`)
@@ -69,25 +67,29 @@
     }
 
     let send=async()=>{
+        if(!body) return
         await api.put('messages', {id, body}, user.token)
-        let obj = {unseen: user.unseen, ids: ids, user: user.username, room: id, body}
+        let obj = {unseen: user.unseen, user: user.username, room: id, body}
         messages = [...messages, obj]
-        socket.emit('room', obj)
+        socket.emit('room', obj, (response)=>{
+            console.log(response.status)
+        })
         updateScroll()
         body=''
     }
 
     let updateScroll=()=>{
+        let chat = document.getElementById('chat')
         setTimeout(()=>{
-            div.scrollTop=div.scrollHeight
-        }, 0)
+            chat.scrollTop=chat.scrollHeight
+        }, 3)
     }
 </script>
 
 <svelte:window on:unload={unload} on:keydown={keydown} />
 
 <svelte:head>
-    <title>'Rooms'</title>
+    <title>{room.name}</title>
 </svelte:head>
 
 <Row noGutter>
@@ -97,22 +99,24 @@
     </Column>
 </Row>
 
-<div style='height: 90%;' id='div'>
-    {#each messages as message}
-        <Row noGutter>
-            <Column>
-                <p style='color: grey; font-size: 0.75rem;'>{message.user}</p>
-                <p>{message.body}</p>            
-            </Column>
-        </Row>
-    {/each}
-</div>
+<div style='height: 400px;' id='chat'>
+    <div>
+        {#each messages as message}
+            <Row noGutter>
+                <Column>
+                    <p style='color: grey; font-size: 0.75rem;'>{message.user}</p>
+                    <p>{message.body}</p>            
+                </Column>
+            </Row>
+        {/each}
+    </div>
 
-<Row noGutter>
-    <Column>
-        <TextInput bind:ref bind:value={body} />
-    </Column>
-</Row>
+    <Row noGutter>
+        <Column>
+            <TextInput bind:ref bind:value={body} />
+        </Column>
+    </Row>
+</div>
 
 <style>
     .head-space {

@@ -17,17 +17,17 @@
         Column,
         TextInput
     } from 'carbon-components-svelte'
-    import io from 'socket.io-client'
+    // import io from 'socket.io-client'
 
-    const socket = io()
+    // const socket = io()
 
     let messages = []
     let message
     let ref
 
-    socket.on('umsg', (msg)=>{
-        messages = [...messages, msg]
-    })
+    // socket.on('umsg', (msg)=>{
+    //     messages = [...messages, msg]
+    // })
 
     let keydown = (e) => {
         switch(e.keyCode){
@@ -39,7 +39,7 @@
     let send=()=>{
         let obj = {me: user.id, id: id, body: message}
         messages = [...messages, obj]
-        socket.emit('user', obj)
+        // socket.emit('user', obj)
         updateScroll()
         message=''
     }

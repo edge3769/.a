@@ -20,6 +20,7 @@
     let blur=()=>{
         focused=false
         open=false
+        add()
     }
 
     let keydown=(e)=>{

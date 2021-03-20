@@ -22,9 +22,6 @@
         context,
         roomTags
     } from '../stores.js'
-    import io from 'socket.io-client'
-
-    const socket = io()
 
     let rooms = []
     let page = 0
@@ -36,7 +33,6 @@
     $: get($roomTags)
 
     let go=async(room)=>{
-        socket.emit('join', room.id)
         user = await api.put('join', {id: room.id}, user.token)
         goto(`room/${room.id}`)
     }
