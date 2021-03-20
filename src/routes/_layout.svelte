@@ -10,31 +10,102 @@
   import Header from "../components/Header.svelte";
   import Theme from "../components/Theme.svelte";
   import * as api from 'api'
+  import io from 'socket.io-client'
+  const socket = io()
 
   let {session} = stores()
 
   let getSub=()=>{
+    //console.log('ui', $session.user.id)
     navigator.serviceWorker.ready
     .then((registration)=>{
       return registration.pushManager.getSubscription()
-      .then(async(s)=>{
-        if (s){
-          return s
+      .then(async(sub)=>{
+        if (sub){
+          return sub
         }
         let res = await fetch(`get`)
         let vapidKey = await res.text()
-        vapidKey = url8(vapidKey)
+        //console.log('v', vapidKey)
+        //console.log('ui', $session.user.id)
         let options = {
+          userVisibleOnly: true,
           applicationServerKey: vapidKey
         }
         return registration.pushManager.subscribe(options)
       })
-    }).then(async(sub)=>{
-        await api.post('subs', {id: $session.user.id, sub: sub})
+    }).then((sub)=>{
+      fetch(`register`, {
+        method: 'post',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          sub: {
+            id: $session.user.id,
+            subscription: sub
+          }
+        })
+      })
     })
   }  
 
-  // if($session.user && typeof window !== 'undefined') getSub()
+  if($session.user && typeof window != 'undefined') getSub()
+
+  function askNotificationPermission(){
+    function checkNotificationPromise(){
+      try {
+        Notification.requestPermission().then()
+      } catch(e){
+        return false
+      }
+      return true
+    }
+
+    async function handlePermission(permission){
+      if(Notification.permission==='denied' || Notification.permission==='default'){
+        $session.user = await api.put('users', {notifications: false}, $session.user.token)        
+      } else {
+        $session.user = await api.put('users', {notifications: true}, $session.user.token)        
+      } 
+    }
+
+    if((!'Notification' in window)){
+      return
+    } else {
+      if(checkNotificationPromise()){
+        Notification.requestPermission()
+        .then((permission)=>{
+          handlePermission(permission)
+        })
+      } else {
+        Notification.requestPermission(function(permission){
+          handlePermission(permission)
+        })
+      }
+    }
+  }
+
+  socket.on('connect', async()=>{
+    if($session.user){
+      $session.user = await api.put('users', {socket_id: socket.id}, $session.user.token)
+    }
+  })
+
+  socket.on('notify', (obj)=>{
+    options = {
+      vibrate: [137],
+      renotify: true,
+      tag: 'new message',
+      icon: '/placeholder.png',
+      badge: '/placeholder.png',
+    }
+    var notification = new Notification('New message', options)
+    notification.onclick =(e)=>{
+      e.preventDefault()
+      goto('rooms')
+    }
+  })
 </script>
 
 

@@ -50,6 +50,7 @@
     $: get($myTags, visible)
 
     let go=async(room)=>{
+        socket.emit('join', room.id)
         chats = {chats: [...user.chats, {form: 'room', id:room.id}]}
         user = await api.put('users', chats, user.token)
         goto(`room/${room.id}`)     
