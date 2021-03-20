@@ -21,12 +21,12 @@
 
     const socket = io()
 
-    let messages = []
-    let message
+    let items = []
+    let value
     let ref
 
     socket.on('umsg', (msg)=>{
-        messages = [...messages, msg]
+        items = [...items, msg]
     })
 
     let keydown = (e) => {
@@ -37,8 +37,8 @@
     }
 
     let send=()=>{
-        let obj = {me: user.id, id: id, body: message}
-        messages = [...messages, obj]
+        let obj = {me: user.id, id: id, value}
+        items = [...items, obj]
         socket.emit('user', obj)
         updateScroll()
         message=''
@@ -55,13 +55,13 @@
 <svelte:window on:keydown={keydown} />
 
 <div id='div'>
-    {#each messages as message}
+    {#each items as message}
         <Row noGutter>
             <Column>
                 {#if message.me == user.id}
-                    <p style='padding: 0.25rem; border-left: 3px solid aliceblue;'>{message.body}</p>
+                    <p style='padding: 0.25rem; border-left: 3px solid aliceblue;'>{message.value}</p>
                 {:else}
-                    <p style='padding: 0.25rem; border-left: 3px solid antiquewhite;'>{message.body}</p>
+                    <p style='padding: 0.25rem; border-left: 3px solid antiquewhite;'>{message.value}</p>
                 {/if}
             </Column>
         </Row>
@@ -70,6 +70,6 @@
 
 <Row noGutter>
     <Column>
-        <TextInput bind:ref bind:value={message} />
+        <TextInput bind:ref bind:value />
     </Column>
 </Row>

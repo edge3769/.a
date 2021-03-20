@@ -6,19 +6,16 @@
             this.redirect('302', 'enter')
         }
         let { items, page, total } = await api.get(`messages?id=${id}`)
-        let messages = items
         let room = await api.get(`rooms/${id}`, user.token)
-        let ids = await api.get(`idsinroom/${id}`).then(r=>r.ids)
-        return {room, messages, page, total, user, ids, id}
+        return {room, items, page, total, user, id}
     }
 </script>
 
 <script>
-    export let room, messages, page, total, user, ids, id
+    export let room, items, page, total, user, id
     import { context } from '../../stores.js'
     import {
         Row,
-        Button,
         Column,
         TextInput,
     } from 'carbon-components-svelte'
@@ -38,7 +35,7 @@
 
     const socket = io()
 
-    let body
+    let value
     let ref
     let div
 
@@ -54,27 +51,27 @@
     }
 
     socket.on('gmsg', (obj)=>{
-        messages = [...messages, obj]
+        items = [...items, obj]
     })
 
-    $: if(total > 100 && div.scrollTop == 0){
-        page++
-        get()
-    }
+    // $: if(total > 100 && div.scrollTop == 0){
+    //     page++
+    //     get()
+    // }
 
     let get=async()=>{
         let res = await api.get(`/messages?id=${id}&page=${page}`)
-        messages = res.items
+        items = res.items
         total = res.total
     }
 
     let send=async()=>{
-        await api.put('messages', {id, body}, user.token)
-        let obj = {unseen: user.unseen, ids: ids, user: user.username, room: id, body}
-        messages = [...messages, obj]
+        await api.put('messages', {id, value}, user.token)
+        let obj = {user: user.username, id, value}
+        items = [...items, obj]
         socket.emit('room', obj)
         updateScroll()
-        body=''
+        value=''
     }
 
     let updateScroll=()=>{
@@ -98,11 +95,11 @@
 </Row>
 
 <div style='height: 90%;' id='div'>
-    {#each messages as message}
+    {#each items as item}
         <Row noGutter>
             <Column>
-                <p style='color: grey; font-size: 0.75rem;'>{message.user}</p>
-                <p>{message.body}</p>            
+                <p style='color: grey; font-size: 0.75rem;'>{item.user}</p>
+                <p>{item.body}</p>            
             </Column>
         </Row>
     {/each}
@@ -110,7 +107,7 @@
 
 <Row noGutter>
     <Column>
-        <TextInput bind:ref bind:value={body} />
+        <TextInput bind:ref bind:value />
     </Column>
 </Row>
 

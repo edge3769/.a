@@ -8,6 +8,7 @@ const to_cache = shell.concat(files);
 const cached = new Set(to_cache);
 
 let notifications = 0
+let ids = []
 
 self.addEventListener('notificationclick', (ev)=>{
   ev.notification.close()
@@ -27,14 +28,16 @@ self.addEventListener('notificationclick', (ev)=>{
 })
 
 self.addEventListener('push', (ev)=>{
-  let unseen = ev.data.json().unseen
   ev.waitUntil(
     self.clients.matchAll({type: 'window'})
     .then(async(clients)=>{
+      let id = ev.data.json().id
+      if(!ids.includes(id)) ids.push(id)
       for (let client of clients){
         if(client.focused){
           return
         }
+      }
       let image = await caches.match('/placeholder.png')
       let options = {
         badge: image,
@@ -42,8 +45,7 @@ self.addEventListener('push', (ev)=>{
       }
       notifications++
       let title = `${notifications} ${(notifications > 1) ? 'New messages':'New message'}` //from ${unseen} rooms`
-      self.registration.showNotification(title, options)
-      }
+      self.registration.showNotification(title)
     })
   )
 })

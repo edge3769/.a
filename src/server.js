@@ -1,4 +1,5 @@
-const { Sequelize } = require('sequelize')
+import * as api from './node_modules/api'
+
 import 'dotenv/config'
 import io from 'socket.io';
 import sirv from "sirv";
@@ -14,8 +15,6 @@ const webPush = require('web-push')
 const FileStore = sessionFileStore(session);
 const { PORT, NODE_ENV, VAPID_PUBLIC, VAPID_PRIVATE } = process.env;
 const server = http.createServer()
-
-// const sequelize = new Sequelize
 
 if(process.env.VAPID_PUBLIC && process.env.VAPID_PRIVATE){
   webPush.setVapidDetails(
@@ -35,34 +34,22 @@ global.fetch = (url, opts) => {
 
 polka({server})
   .use(bodyParser.json())
-  .post('/register', (req, res)=>{
-    let sub = req.body.sub
-    //console.log('id', sub.id)
-    if(!subs.includes(sub)){
-      subs.push(sub)
-    }
-  })
   .get('/get', (req, res)=>{
     if(!process.env.VAPID_PUBLIC || !process.env.VAPID_PRIVATE){
       res.sendStatus(500)
     }
     res.end(process.env.VAPID_PUBLIC)
   })
-  .post('/send', (req, res)=>{
-    console.log('send')
-    let unseen = req.body.unseen
-    let ids = req.body.ids
-    console.log('i', ids)
-      let receivingSubs = subs.filter(s=>ids.includes(s.id))
-      // console.log('r', receivingSubs)
+  .post('/send', async(req, res)=>{
+    let id = req.body.id
+    let {subs} = await api.get(`subs/${id}`)
     const options = {
       TTL: 5184000
     }
-    for (let sub of receivingSubs){
-      let json = {unseen: unseen}
+    for (let sub of subs){
+      let json = {id: id}
       let payload = JSON.stringify(json)
-      console.log('w')
-      webPush.sendNotification(sub.subscription, payload, options)
+      webPush.sendNotification(sub, payload, options)
     }
   })
   .use(
@@ -93,25 +80,21 @@ io(server).on('connection', (socket)=>{
   })
 
   socket.on('user', (obj)=>{
-    io(server).to(obj.id).emit('umsg', obj.body)
+    io(server).to(obj.id).emit('umsg', obj.value)
   })
 
   socket.on('room', (obj)=>{
     let headers = {
       'Content-type': 'application/json'
     }
-    let body = {
-      ids: obj.ids,
-      unseen: obj.unseen
-    }
-    body = JSON.stringify(body)
+    let body = JSON.stringify({id: obj.id})
     let options = {
       method: 'post',
       headers: headers,
       body: body
     }
-    global.fetch('/send', options)
-    socket.to(obj.room).emit('gmsg', obj)
+    socket.in(obj.id).emit('gmsg', obj)
+    // global.fetch('/send', options)
   })
 
   socket.on('disconnect', ()=>{
