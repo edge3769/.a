@@ -6,13 +6,11 @@
         }
         let rooms
         let {items, total, pages} = await api.get('xrooms', user.token)
-        console.log(items)
         if (Array.isArray(items)) {
             rooms = items
         } else {
             rooms = []
         }
-        console.log('s', rooms)
         return {rooms, pages, total, user}
     }
 </script>

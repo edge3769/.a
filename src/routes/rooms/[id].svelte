@@ -7,14 +7,12 @@
         let tagString = JSON.stringify([])
         let url = `rooms?id=${id}&tags=${tagString}&page=1`
         let res = await api.get(url, user.token)
-        console.log('i', res.items)
         let rooms
         if (Array.isArray(res.items)) {
             rooms = res.items
         } else {
             rooms = []
         }
-        console.log('r', rooms)
         let total = res.total
         let pages = res.pages
         if (res == '401'){
@@ -45,7 +43,6 @@
     import * as api from 'api'
     import { onMount } from 'svelte';
     
-    $: console.log(rooms)
 
     onMount(()=>{
         ref.focus()

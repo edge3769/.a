@@ -74,7 +74,7 @@
         <SideNavLink bind:ref={installRef} on:click={install} href='' text='Add To Homescreen'/>
       {/if}
       <SideNavLink href='add_room' text='Add Room'/>
-      <SideNavLink href='rooms/{$session.user.id}' text='My Rooms'/>
+      <!-- <SideNavLink href='rooms/{$session.user.id}' text='My Rooms'/> -->
       <SideNavLink href='rooms' text='Rooms'/>
       <SideNavLink href='edit' text='Edit'/>
       <SideNavLink text='Exit' href='' on:click={exit} />

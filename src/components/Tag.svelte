@@ -43,7 +43,6 @@
     }
 
     const del=(tag)=>{
-        console.log('del')
         tags=tags.filter(t => t != tag)
         dispatch('change')
     }

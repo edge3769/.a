@@ -1,7 +1,6 @@
 <script context='module'>
     import * as api from 'api'
     export async function preload({params}, {user}){
-        console.log(user)
         let {id} = params
         if(!user){
             this.redirect('302', 'enter')
@@ -15,6 +14,7 @@
 
 <script>
     export let room, items, page, total, user, id
+    import {goto} from '@sapper/app'
     import { context } from '../../stores.js'
     import {
         Row,
@@ -23,6 +23,12 @@
     } from 'carbon-components-svelte'
     import io from 'socket.io-client'
     import {onMount} from 'svelte'
+
+    let go=()=>{
+        if(!room.open && room.user == user.username){
+            goto(`edit/${room.id}`)
+        }
+    }
 
     onMount(()=>{
         window.scrollTo({left: 0, top: document.body.scrollHeight})
@@ -39,7 +45,6 @@
     const socket = io()
     socket.on('connect', ()=>{
         socket.emit('join', id)
-        console.log('sr', socket.id, socket.rooms)
     })
 
     let value
@@ -83,7 +88,7 @@
 
 <Row noGutter>
     <Column>
-        <p class='head'>{$context}</p>
+        <p on:click={go} class='head'>{$context}</p>
         <div class='head-space'></div>
     </Column>
 </Row>

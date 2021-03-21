@@ -29,8 +29,6 @@
 
     $: change(username)
 
-    $: if(!open) tags = null
-
     $: if(process.browser && username) {
         setTimeout(checkUser, 123)
     }
@@ -42,7 +40,6 @@
     }
 
     const checkUser=async()=>{
-        console.log('check')
         let res = await api.get(`users/${username}`)
         if(res.id){
             userInvalid = false

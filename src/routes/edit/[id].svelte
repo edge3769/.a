@@ -1,11 +1,14 @@
 <script context='module'>
     import * as api from 'api'
     export async function preload({params}, {user}){
+        let {id} = params
+        let room = await api.get(`rooms/${id}`)
         if (!user){
             this.redirect(302, 'enter')
         }
-        let {id} = params
-        let room = await api.get(`rooms/${id}`)
+        if (!(room.user == user.username)){
+            this.error(401, 'Unauthorised')
+        }
         return { room, user }
     }
 </script>
@@ -21,8 +24,8 @@
         Button,
         Modal,
         Row,
-        Tag
     } from 'carbon-components-svelte'
+    import Tag from '../../components/Tag.svelte'
     import Input from '../../components/Input/Input.svelte'
 
     let nameInvalid
