@@ -39,14 +39,14 @@ self.addEventListener('push', (ev)=>{
       //     return
       //   }
       // }
-      let image = await caches.match('/placeholder.png')
+      let image = `${self.origin}/placeholder.png`
       let options = {
         badge: image,
         icon: image
       }
       notifications++
       let title = `${notifications} ${(notifications > 1) ? 'New messages':'New message'}` //from ${unseen} rooms`
-      self.registration.showNotification(title)
+      self.registration.showNotification(title, options)
     })
   )
 })

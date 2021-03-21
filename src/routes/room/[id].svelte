@@ -20,6 +20,11 @@
         TextInput,
     } from 'carbon-components-svelte'
     import io from 'socket.io-client'
+    import {onMount} from 'svelte'
+
+    onMount(()=>{
+        window.scrollTo({left: 0, top: document.body.scrollHeight})
+    })
 
     $context = room.name
 
@@ -51,19 +56,19 @@
 
     let send=async()=>{
         if(!value) return
-        // value=value.trim()
-        await api.put('messages', {id, value}, user.token).then(
-            ()=>updateScroll())
+        value=value.trim()
         let obj = {user: user.username, id, value}
         items = [...items, obj]
         socket.emit('msg', obj)
+        await api.put('messages', {id, value}, user.token)
+        updateScroll()
         value=''
     }
 
     let updateScroll=()=>{
-        setInterval(()=>{
-            window.scrollTo(window.scrollHeight)
-        }, 0)
+        // setInterval(()=>{
+            window.scrollTo({left: 0, top: document.body.scrollHeight})
+        // }, 0)
     }
 </script>
 
@@ -84,7 +89,7 @@
     <Row noGutter>
         <Column>
             <p style='color: grey; font-size: 0.75rem;'>{item.user}</p>
-            <p>{item.value}</p>            
+            <p style='overflow-wrap: break-word'>{item.value}</p>            
         </Column>
     </Row>
 {/each}

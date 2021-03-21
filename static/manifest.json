@@ -2,7 +2,7 @@
     "background-color": "white",
     "start_url": "/",
     "short_name": "x369",
-    "display": "standalone",
+    "display": "fullscreen",
     "name": "x369",
     "icons": [
         {

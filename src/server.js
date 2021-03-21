@@ -47,7 +47,11 @@ polka({server})
     for (let sub of subs){
       let json = {id: id}
       let payload = JSON.stringify(json)
-      webPush.sendNotification(sub, payload, options)
+      try{
+        webPush.sendNotification(sub, payload, options)
+      } catch {
+        pass
+      }
     }
   })
   .use(
