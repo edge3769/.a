@@ -37,7 +37,7 @@
     })
   }  
 
-  if($session.user && typeof window != 'undefined') getSub()
+  if(navigator.serviceWorker && $session.user && typeof window != 'undefined') getSub()
 </script>
 
 
