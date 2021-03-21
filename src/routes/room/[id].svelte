@@ -24,6 +24,7 @@
 
     onMount(()=>{
         window.scrollTo({left: 0, top: document.body.scrollHeight})
+        ref.focus()
     })
 
     $context = room.name
