@@ -49,7 +49,7 @@ polka({server})
       let payload = JSON.stringify(json)
       try{
         webPush.sendNotification(sub, payload, options)
-      } catch {
+      } catch (e){
         pass
       }
     }
