@@ -27,10 +27,18 @@
     let userInvalid
     let username
 
+    $: change(username)
+
     $: if(!open) tags = null
 
     $: if(process.browser && !(username === '')) {
         let check = window.setTimeout(checkUser, 123)
+    }
+
+    let change=()=>{
+        if(username){
+            name = `${user.username}.${username}`
+        }
     }
 
     const checkUser=async()=>{
