@@ -50,7 +50,7 @@ polka({server})
       try{
         webPush.sendNotification(sub, payload, options)
       } catch (e){
-        pass
+        console.log(e)
       }
     }
   })

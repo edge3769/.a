@@ -31,8 +31,8 @@
 
     $: if(!open) tags = null
 
-    $: if(process.browser && !(username === '')) {
-        let check = window.setTimeout(checkUser, 123)
+    $: if(process.browser && username) {
+        setTimeout(checkUser, 123)
     }
 
     let change=()=>{
@@ -42,6 +42,7 @@
     }
 
     const checkUser=async()=>{
+        console.log('check')
         let res = await api.get(`users/${username}`)
         if(res.id){
             userInvalid = false
@@ -55,6 +56,7 @@
     let tags
 
     const add = async function() {
+        if(!name) return
         let data = {
             open,
             tags,
@@ -99,7 +101,7 @@
                 <Input
                     bind:invalid={userInvalid}
                     invalidText='No user'
-                    labelText='Username'
+                    labelText='User'
                     bind:value={username}
                 />
             {/if}

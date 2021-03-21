@@ -1,16 +1,29 @@
 <script context='module'>
     export async function preload({params}, {user}){
+        if(!user){
+            this.redirect('302', 'enter')
+        }
         let {id} = params
         let tagString = JSON.stringify([])
         let url = `rooms?id=${id}&tags=${tagString}&page=1`
-        let res = await api.get(url)
-        let rooms = res.rooms
+        let res = await api.get(url, user.token)
+        console.log('i', res.items)
+        let rooms
+        if (Array.isArray(res.items)) {
+            rooms = res.items
+        } else {
+            rooms = []
+        }
+        console.log('r', rooms)
         let total = res.total
         let pages = res.pages
+        if (res == '401'){
+            this.redirect(302, 'enter')
+        }
         if (res == '404'){
             this.error(404, 'User not Found')
         }
-        return {rooms, total, pages, user, id}
+        return {rooms, total, pages, id}
     }
 </script>
 
@@ -18,14 +31,12 @@
     export let rooms = []
     export let total = 0
     export let pages = 0
-    export let user
     export let id
 
     import { goto } from '@sapper/app'
-    import { context, myTags } from '../../stores'
+    import { myTags } from '../../stores'
     import {
         PaginationNav,
-        Checkbox,
         Column,
         Search,
         Link,
@@ -34,26 +45,22 @@
     import * as api from 'api'
     import { onMount } from 'svelte';
     
+    $: console.log(rooms)
+
     onMount(()=>{
         ref.focus()
     })
 
     let page = 0
 
-    let visible = true
-    let open = false
+    let open
     let current
     let got
     let tag
     let ref
 
-    $: get($myTags, visible)
-
-    let go=async(room)=>{
-        socket.emit('join', room.id)
-        chats = {chats: [...user.chats, {form: 'room', id:room.id}]}
-        user = await api.put('users', chats, user.token)
-        goto(`room/${room.id}`)     
+    let go=(room)=>{
+        goto(`room/${room.id}`)
     }
 
     let keydown = (e) => {
@@ -67,13 +74,11 @@
 
     let focused=()=>{
         current=ref
-        if ($myTags.length > 0){
-            open=true
-        }
+        if ($myTags.length > 0)open=true
     }
 
     let addTag = () => {
-        if (tag != '' && !$myTags.includes(tag)){
+        if (tag && !$myTags.includes(tag)){
             $myTags = [...$myTags, tag]
             open=true
             tag = ''
@@ -93,7 +98,9 @@
         let tagString = JSON.stringify($myTags)
         let url = `rooms?id=${id}&tags=${tagString}&page=${page+1}`
         let res = await api.get(url)
-        rooms = res.items
+        if (!Array.isArray(res.items)){
+            rooms = res.items
+        }
         total = res.total
         pages = res.pages
         got = true

@@ -26,10 +26,7 @@
     let page = 0
     let total = 0
     let pages = 0
-
     let got
-
-    $: get($roomTags)
 
     let go=async(room)=>{
         await api.put('join', {id: room.id}, user.token)
@@ -40,7 +37,9 @@
         let tagString = JSON.stringify($roomTags)
         let url = `rooms?tags=${tagString}&visible=1&page=${page+1}`
         let res = await api.get(url, user.token)
-        rooms = res.items
+        if(Array.isArray(res.items)){
+            rooms = res.items
+        }
         total = res.total
         pages = res.pages
         got = true
@@ -52,7 +51,7 @@
     <title>369</title>
 </svelte:head>
 
-<Tag bind:tags={$roomTags} />
+<Tag on:change={get} bind:tags={$roomTags} />
 
 {#each rooms as room}
     <br />

@@ -4,7 +4,15 @@
         if(!user){
             this.redirect(302, 'enter')
         }
-        let {rooms, total, pages} = await api.get('xrooms', user.token)
+        let rooms
+        let {items, total, pages} = await api.get('xrooms', user.token)
+        console.log(items)
+        if (Array.isArray(items)) {
+            rooms = items
+        } else {
+            rooms = []
+        }
+        console.log('s', rooms)
         return {rooms, pages, total, user}
     }
 </script>
@@ -32,15 +40,15 @@
     })
 
     let get=async()=>{
-        tagString = JSON.stringify(tags)
+        let tagString = JSON.stringify(tags)
         let res = await api.get(`xrooms?tags=${tagString}&page=${page}`, user.token)
-        rooms = res.rooms
+        rooms = res.items
         pages = res.pages
         total = res.total
     }
 </script>
 
-<Tag bind:tags />
+<Tag on:change={get} bind:tags />
 
 <div id='div'>
     {#each rooms as room}

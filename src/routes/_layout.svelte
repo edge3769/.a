@@ -11,6 +11,16 @@
   import {stores} from '@sapper/app'
   import * as api from 'api'
 
+  let deferredPrompt
+
+  const prompt=()=>{
+    window.addEventListener('beforeInstallPrompt', (e)=>{
+      e.preventDefault()
+      deferredPrompt = e
+      deferredPrompt.prompt()
+    })
+  }
+
   const {session} = stores()
 
   let getSub=()=>{
@@ -37,7 +47,11 @@
     })
   }  
 
-  if(navigator && navigator.serviceWorker && $session.user && typeof window != 'undefined') getSub()
+  if(typeof window != 'undefined'){
+    if(navigator && navigator.serviceWorker && $session.user){
+      getSub()  
+    }
+  } 
 </script>
 
 

@@ -1,28 +1,30 @@
 <script>
     export let tags = []
+    import { createEventDispatcher } from 'svelte'
     import {
         Tag,
         Row,
-        Search,
         Column,
         TextInput
     } from 'carbon-components-svelte'
+
+    const dispatch = createEventDispatcher()
 
     let focused
     let value
     let open
 
-    let focus=()=>{
+    const focus=()=>{
         focused=true
         if(tags.length > 0) open=true
     }
 
-    let blur=()=>{
+    const blur=()=>{
         focused=false
-        open=false
+        add()
     }
 
-    let keydown=(e)=>{
+    const keydown=(e)=>{
         switch(e.keyCode){
             case 13:
                 if (focused){
@@ -31,19 +33,22 @@
         }
     }
 
-    let add=()=>{
-        if (value != '' && !tags.includes(value)){
+    const add=()=>{
+        if (value && !tags.includes(value)){
             tags=[...tags, value]
             open=true
             value=''
         }
+        dispatch('change')
     }
 
-    let del=(tag)=>{
+    const del=(tag)=>{
+        console.log('del')
         tags=tags.filter(t => t != tag)
+        dispatch('change')
     }
 
-    let clear=()=>{
+    const clear=()=>{
         tags=[]
         open=false
     }

@@ -39,7 +39,7 @@ self.addEventListener('push', (ev)=>{
       //     return
       //   }
       // }
-      let image = `${self.origin}/placeholder.png`
+      let image = `${self.origin}/x369-512.png`
       let options = {
         badge: image,
         icon: image
