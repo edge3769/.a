@@ -13,7 +13,6 @@
     export let user
     import { goto, stores } from '@sapper/app';
     import {
-        InlineLoading,
         FluidForm,
         TextInput,
         Checkbox,

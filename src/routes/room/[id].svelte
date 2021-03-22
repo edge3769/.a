@@ -5,9 +5,12 @@
         if(!user){
             this.redirect('302', 'enter')
         }
+        let room = await api.get(`rooms/${id}`, user.token)
+        if(!room.open && !room.users.includes(user.username)){
+            this.error('Unauthorized')
+        }
         let { items, page, total } = await api.get(`messages?id=${id}`, user.token)
         if (!Array.isArray(items)) items = []
-        let room = await api.get(`rooms/${id}`, user.token)
         return {room, items, page, total, user, id}
     }
 </script>

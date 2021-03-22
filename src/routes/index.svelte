@@ -12,8 +12,7 @@
     import {
         Row,
         Link,
-        Column,
-        PaginationNav,
+        Column
     } from 'carbon-components-svelte'
     import Tag from '../components/Tag.svelte'
     import * as api from 'api'
@@ -25,7 +24,6 @@
     let rooms = []
     let page = 0
     let total = 0
-    let pages = 0
     let got
 
     let go=async(room)=>{
@@ -66,14 +64,6 @@
     <Row noGutter>
         <Column>
             <p>There don't seem to be any results</p>        
-        </Column>
-    </Row>
-{/if}
-
-{#if total>10}
-    <Row noGutter>
-        <Column>
-            <PaginationNav loop bind:page bind:total={pages}/>
         </Column>
     </Row>
 {/if}
