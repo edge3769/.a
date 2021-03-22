@@ -1,7 +1,8 @@
+<svelte:window on:appinstalled={installed} on:beforeinstallprompt={before} />
+
 <script>
   import { post } from 'utils.js'
   import { stores, goto } from '@sapper/app'
-  import { onMount } from 'svelte'
   import SideNavLink from './SideNavLink.svelte'
   import { isSideNavOpen, logged } from '../stores.js'
   import {
@@ -11,20 +12,20 @@
     Header
   } from "carbon-components-svelte"
 
-  let mounted
   let show
   let installRef
   let deferredPrompt
   $isSideNavOpen = false
 
-  onMount(()=>{
-    mounted=true
-    window.addEventListener('beforeInstallPrompt', (e)=>{
-      show=true
-      e.preventDefault()
-      deferredPrompt = e
-    })
-  })
+  let installed=()=>{
+    show=false
+  }
+
+  let before=(e)=>{
+    show=true
+    e.preventDefault()
+    deferredPrompt = e
+  }
 
   let install=()=>{
     if(installRef){
@@ -32,7 +33,7 @@
         deferredPrompt.prompt()
         deferredPrompt.userChoice.then((choice)=>{
           if(choice.outcome === 'accepted'){
-            show = False
+            show = false
           }
         })
       } else {

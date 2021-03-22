@@ -1,11 +1,17 @@
 {
     "description": "Chat",
-    "background-color": "white",
+    "theme_color": "#e0e0e0",
+    "background_color": "#ffffff",
     "start_url": "/",
     "short_name": "x369",
     "display": "fullscreen",
     "name": "x369",
     "icons": [
+        {
+            "src": "x369-144.png",
+            "sizes": "144x144",
+            "type": "image/png"
+        },
         {
             "src": "x369-512.png",
             "sizes": "512x512",
