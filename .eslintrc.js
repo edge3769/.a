@@ -5,6 +5,7 @@ module.exports = {
         "node": true
     },
     "plugins": [
+        'cypress',
         'svelte3'
     ],
     "overrides": [

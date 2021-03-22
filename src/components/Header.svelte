@@ -77,6 +77,7 @@
       <SideNavLink href='add_room' text='Add Room'/>
       <!-- <SideNavLink href='rooms/{$session.user.id}' text='My Rooms'/> -->
       <SideNavLink href='rooms' text='Rooms'/>
+      <SideNavLink href='users' text='Users'/>
       <SideNavLink href='edit' text='Edit'/>
       <SideNavLink text='Exit' href='' on:click={exit} />
     {/if}

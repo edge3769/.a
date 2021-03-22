@@ -45,7 +45,7 @@ self.addEventListener('push', (ev)=>{
         icon: image
       }
       notifications++
-      let title = `${notifications} ${(notifications > 1) ? 'New messages':'New message'}` //from ${unseen} rooms`
+      let title = `${notifications} ${(notifications > 1) ? 'New messages':'New message'}`
       self.registration.showNotification(title, options)
     })
   )

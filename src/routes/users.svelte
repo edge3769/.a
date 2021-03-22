@@ -1,47 +1,71 @@
-<script context='module'>
-    import * as api from 'api'
+<script context='module'> 
     export async function preload({params}, {user}){
         if(!user){
             this.redirect('302', 'enter')
         }
-        let { items, total, pages } = await api.get('users', user.token)
-        return { items, total, pages}
+        return {user}
     }
 </script>
 
 <script>
-    export let items, total//, pages
+    export let user
     import {
         Row,
-        Column,
+        Link,
+        Column
     } from 'carbon-components-svelte'
+    import Tag from '../components/Tag.svelte'
+    import * as api from 'api'
+    import { goto } from '@sapper/app'
+    import {
+        open,
+        username,
+        userTags
+    } from '../stores.js'
 
-    // let page = 0
+    let users = []
+    let page = 0
+    let total = 0
+    let got
+
+    let go=async(u)=>{
+        $open=false
+        $username=u
+        goto('add_room')
+    }
+
+    let get=async()=>{
+        let tagString = JSON.stringify($userTags)
+        let url = `users?tags=${tagString}&page=${page+1}`
+        let res = await api.get(url, user.token)
+        if(Array.isArray(res.items)){
+            users = res.items
+        }
+        total = res.total
+        got = true
+
+    }
 </script>
 
 <svelte:head>
-    <title>Users</title>
+    <title>369</title>
 </svelte:head>
 
-<Row noGutter>
-    <Column>
-        <strong>Best match</strong>
-    </Column>
-</Row>
+<Tag on:change={get} bind:tags={$userTags} />
 
-{#each items as user}
-    <br/>
+{#each users as user}
+    <br />
     <Row noGutter>
         <Column>
-            <div>
-                <p>{user.username}</p>
-            </div>  
+            <p on:click={go(user.username)}>{user.username}</p>
         </Column>
     </Row>
 {/each}
 
-{#if total < 1}
-<div>
-    <p>There doesn't seem to be any result</p><!-- <p>There don't seem to be any results</p> -->
-</div>
+{#if got && total < 1}
+    <Row noGutter>
+        <Column>
+            <p>There don't seem to be any results</p>        
+        </Column>
+    </Row>
 {/if}

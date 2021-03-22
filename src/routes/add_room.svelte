@@ -19,28 +19,27 @@
         ButtonSet,
         FluidForm
     } from 'carbon-components-svelte'
-    import {context} from '../stores.js'
+    import {open, username, context} from '../stores.js'
     import { goto } from '@sapper/app'
     import * as api from 'api'
 
     let nameInvalid
     let userInvalid
-    let username
 
-    $: change(username)
+    $: change($username)
 
-    $: if(process.browser && username) {
+    $: if(process.browser && $username) {
         setTimeout(checkUser, 123)
     }
 
     let change=()=>{
-        if(username){
-            name = `${user.username}.${username}`
+        if($username){
+            name = `${user.username}.${$username}`
         }
     }
 
     const checkUser=async()=>{
-        let res = await api.get(`users/${username}`)
+        let res = await api.get(`users/${$username}`)
         if(res.id){
             userInvalid = false
         } else {
@@ -48,17 +47,16 @@
         }
     }
     
-    let open = true
     let name
     let tags
 
     const add = async function() {
         if(!name) return
         let data = {
-            open,
+            open: $open,
             tags,
             name,
-            username
+            username: $username
         }
         let res = await api.post('rooms', data, user.token)
         if (res.nameError) {
@@ -77,11 +75,11 @@
 
 <Row noGutter>
     <Column>
-        <Checkbox bind:checked={open} labelText='Open' />
+        <Checkbox bind:checked={$open} labelText='Open' />
     </Column>
 </Row>
 
-{#if open}
+{#if $open}
     <Tag bind:tags />
 {/if}
 
@@ -94,12 +92,12 @@
                 labelText="Name"
                 bind:value={name} 
             />
-            {#if !open}
+            {#if !$open}
                 <Input
                     bind:invalid={userInvalid}
                     invalidText='No user'
                     labelText='User'
-                    bind:value={username}
+                    bind:value={$username}
                 />
             {/if}
         </FluidForm>

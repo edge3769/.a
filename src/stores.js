@@ -9,9 +9,12 @@ function simpleStore() {
     }
 }
 
+export const open = simpleStore()
 export const search = simpleStore()
 export const logged = simpleStore()
 export const context = simpleStore()
 export const myTags = simpleStore()
 export const roomTags = simpleStore()
+export const userTags = simpleStore()
+export const username = simpleStore()
 export const isSideNavOpen = simpleStore()
