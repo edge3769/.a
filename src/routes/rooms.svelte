@@ -54,11 +54,11 @@
         <Row noGutter>
             {#if room.unseen}
                 <Column>
-                    <Link style='font-weight: 600' href='room/{room.id}'>{room.name}</Link>
+                    <Link rel='prefetch' style='font-weight: 600' href='room/{room.id}'>{room.name}</Link>
                 </Column>
             {:else}
                 <Column>
-                    <Link href='room/{room.id}'>{room.name}</Link>
+                    <Link rel='prefetch' href='room/{room.id}'>{room.name}</Link>
                 </Column>
             {/if}
         </Row>
