@@ -1,4 +1,7 @@
 {
+    "dir": "ltr",
+    "lang": "en",
+    "categories": ["social"],
     "description": "Chat",
     "theme_color": "#e0e0e0",
     "background_color": "#ffffff",
@@ -6,6 +9,8 @@
     "short_name": "x369",
     "display": "fullscreen",
     "name": "x369",
+    "orientation": "portrait",
+    "scope": "/",
     "icons": [
         {
             "src": "x369-144.png",

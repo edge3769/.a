@@ -34,11 +34,11 @@ self.addEventListener('push', (ev)=>{
     .then(async(clients)=>{
       let id = ev.data.json().id
       if(!ids.includes(id)) ids.push(id)
-      // for (let client of clients){
-      //   if(client.focused){
-      //     return
-      //   }
-      // }
+      for (let client of clients){
+        if(client.focused){
+          return
+        }
+      }
       let image = `${self.origin}/x369-512.png`
       let options = {
         badge: image,
