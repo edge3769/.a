@@ -17,7 +17,7 @@
     } from 'carbon-components-svelte';
     import Input from '../components/Input/Input.svelte'
     import { goto, stores } from '@sapper/app';
-    import { logged } from '../stores.js'
+    import { isSideNavOpen, logged } from '../stores.js'
     import { post } from 'utils.js';
 
     let { session } = stores();
@@ -75,6 +75,7 @@
         if (r.user) {
             $session.user = r.user
             $logged = true
+            $isSideNavOpen = true
             goto('/')
         }
     }
@@ -96,6 +97,7 @@
         if (await r.user) {
             $session.user = await r.user
             $logged = true
+            $isSideNavOpen = true
             goto('/')
         }
     }

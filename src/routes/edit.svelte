@@ -27,13 +27,12 @@
 
     let username = user.username
     let visible = user.visible
-    let tags = user.tags
     let token = user.token
+    let tags = user.tags
 
     let usernameInvalid
     let usernameError
     let current
-    let userRes
     let open
     let tag
     let ref

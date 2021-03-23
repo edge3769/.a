@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "sapper dev",
+    "devp": "NODE_ENV=production sapper dev",
     "build": "sapper build --legacy",
     "webhint": "hint http://localhost:3000",
     "export": "sapper export --legacy",

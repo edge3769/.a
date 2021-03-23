@@ -14,7 +14,7 @@
 
   let show
   let installRef
-  let deferredPrompt
+  let installPrompt
   $isSideNavOpen = false
 
   let installed=()=>{
@@ -24,22 +24,16 @@
   let before=(e)=>{
     show=true
     e.preventDefault()
-    deferredPrompt = e
+    installPrompt = e
   }
 
   let install=()=>{
-    if(installRef){
-      if (deferredPrompt) {
-        deferredPrompt.prompt()
-        deferredPrompt.userChoice.then((choice)=>{
+        installPrompt.prompt()
+        installPrompt.userChoice.then((choice)=>{
           if(choice.outcome === 'accepted'){
             show = false
           }
         })
-      } else {
-        installRef.click()
-      }
-    }
   }
 
   let { session } = stores()
