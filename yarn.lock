@@ -1798,6 +1798,16 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
+"@polka/redirect@^1.0.0-next.0":
+  version "1.0.0-next.0"
+  resolved "https://registry.yarnpkg.com/@polka/redirect/-/redirect-1.0.0-next.0.tgz#df56f2fc3f1db9c5397c7eafc0e85442eeead427"
+  integrity sha512-ym6ooqMr09+cV+y52p5kszJ0jYcX+nJfm8POrQb7QYowvpPPuneZ71EclHrQSB7a50lcytgR/xtL6AUFdvyEkg==
+
+"@polka/url@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@polka/url/-/url-0.5.0.tgz#b21510597fd601e5d7c95008b76bf0d254ebfd31"
+  integrity sha512-oZLYFEAzUKyi3SKnXvj32ZCEGH6RDnao7COuCVhDydMS9NrCSVXhM79VaKyP5+Zc33m0QXEd2DN3UkU7OsHcfw==
+
 "@polka/url@^1.0.0-next.11", "@polka/url@^1.0.0-next.9":
   version "1.0.0-next.11"
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.11.tgz#aeb16f50649a91af79dbe36574b66d0f9e4d9f71"
