@@ -4,7 +4,7 @@
         if (!user){
             this.redirect(302, 'enter')
         }
-        user = await api.get(`users/${user.id}`)
+        user = await api.get(`users/${user.id}`) || {}
         return {user}
     }
 </script>

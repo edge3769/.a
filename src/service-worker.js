@@ -81,14 +81,23 @@ self.addEventListener('activate', event => {
  * Fall back to the cache if the user is offline.
  */
 async function fetchAndCache(request) {
-	return caches.open(`offline${timestamp}`).then((cache) => {
-		return cache.match(request).then((cacheRes) => {
-			return cacheRes || fetch(request).then((netRes)=>{
-				cache.put(request, netRes.clone())
-				return netRes
-			})
+	return caches.open(`offline${timestamp}`).then(cache => {
+		return fetch(request).then(netRes => {
+			cache.put(request, netRes.clone())
+			return netRes || cache.match(request)
+		}).catch(err => {
+			return cache.match(request)
 		})
 	})
+
+	// return caches.open(`offline${timestamp}`).then((cache) => {
+	// 	return cache.match(request).then((cacheRes) => {
+	// 		return cacheRes || fetch(request).then((netRes)=>{
+	// 			cache.put(request, netRes.clone())
+	// 			return netRes
+	// 		})
+	// 	})
+	// })
 }
 
 self.addEventListener('fetch', event => {

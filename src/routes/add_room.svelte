@@ -39,7 +39,7 @@
     }
 
     const checkUser=async()=>{
-        let res = await api.get(`users/${$username}`)
+        let res = await api.get(`users/${$username}`) || {}
         if(res.id){
             userInvalid = false
         } else {

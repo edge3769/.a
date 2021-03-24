@@ -5,7 +5,7 @@
             this.redirect(302, 'enter')
         }
         let rooms
-        let {items, total, pages} = await api.get('xrooms', user.token)
+        let {items, total, pages} = await api.get('xrooms', user.token) || {}
         if (Array.isArray(items)) {
             rooms = items
         } else {
