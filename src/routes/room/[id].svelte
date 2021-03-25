@@ -1,11 +1,11 @@
 <script context='module'>
     import * as api from 'api'
     export async function preload({params}, {user}){
-        let {id} = params
+        const {id} = params
         if(!user){
             this.redirect('302', 'enter')
         }
-        let room = await api.get(`rooms/${id}`, user.token)
+        const room = await api.get(`rooms/${id}`, user.token)
         if(!room.open && !room.users.includes(user.username)){
             this.error('Unauthorized')
         }
