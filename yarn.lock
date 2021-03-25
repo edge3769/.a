@@ -2617,18 +2617,23 @@ canvas@^2.6.1:
     node-pre-gyp "^0.15.0"
     simple-get "^3.0.3"
 
-carbon-components-svelte@0.29.2:
-  version "0.29.2"
-  resolved "https://registry.yarnpkg.com/carbon-components-svelte/-/carbon-components-svelte-0.29.2.tgz#7420d0322a044a70a9d3be7b847eea7a261a19e0"
-  integrity sha512-bdABB1nauA+eN3xmr8QCH2Lvto8HiW+0A9eI1gHsIbwtFDhsDfG+a10oZje8E/yHOCoY5T+FFhGdB8VCq6fb2w==
+carbon-components-svelte@0.31.0:
+  version "0.31.0"
+  resolved "https://registry.yarnpkg.com/carbon-components-svelte/-/carbon-components-svelte-0.31.0.tgz#92a56edf523937e386e0c2f0d247183beb1c3c3f"
+  integrity sha512-gkeHvJWdpLCJXMf1I2CH7MPksUkWKiCizmTire2lU5Qvgyb8XjiFAbsLYdH/1X7fOUNqeBeDgJks9+UoIWMnnQ==
   dependencies:
-    carbon-icons-svelte "^10.21.0"
+    carbon-icons-svelte "^10.27.0"
     flatpickr "4.6.9"
 
-carbon-icons-svelte@^10.21.0, carbon-icons-svelte@^10.23.0:
+carbon-icons-svelte@^10.23.0:
   version "10.23.0"
   resolved "https://registry.yarnpkg.com/carbon-icons-svelte/-/carbon-icons-svelte-10.23.0.tgz#066a95e98c8c6ac592c920604241aa5f59b8ed52"
   integrity sha512-jjJXfCDF23QM9lFJDlwRFp6Z8Ar/atT167WNcUEJpn6h7soX1jk9Uexnr1/7GX2QtjhAvVl5S7wHZrPO7cLOrQ==
+
+carbon-icons-svelte@^10.27.0:
+  version "10.28.0"
+  resolved "https://registry.yarnpkg.com/carbon-icons-svelte/-/carbon-icons-svelte-10.28.0.tgz#812a6eae858d0c9e043067c714910fcfb6249cd2"
+  integrity sha512-C3K+U2PRy63WHFZme1HQNju89rhVIQmUkfgBrZzcezdutkhXbSPOY+o/MI0B2mDcQ7G9gfhEpqsXET8gBTWfJQ==
 
 caseless@~0.12.0:
   version "0.12.0"

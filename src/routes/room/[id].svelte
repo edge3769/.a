@@ -6,9 +6,9 @@
             this.redirect('302', 'enter')
         }
         const room = await api.get(`rooms/${id}`, user.token)
-        if(!room.open && !room.users.includes(user.username)){
-            this.error('Unauthorized')
-        }
+        // if(!room.open && !room.users.includes(user.username)){
+        //     this.error('Unauthorized')
+        // }
         let { items, page, total } = await api.get(`messages?id=${id}`, user.token)
         if (!Array.isArray(items)) items = []
         return {room, items, page, total, user, id}
@@ -22,11 +22,52 @@
     import {
         Row,
         Column,
-        TextInput,
+        TextArea,
     } from 'carbon-components-svelte'
     import io from 'socket.io-client'
     import {onMount} from 'svelte'
+
+    $context = room.name
     const socket = io()
+    let mounted
+    let value
+    let ref
+
+    $: if(typeof window != 'undefined') console.log(window.scrollY)
+
+    $: if(mounted && total > 100 && window.scrollY==0){
+        get()
+    }
+
+    onMount(()=>{
+        window.scrollTo({left: 0, top: document.body.scrollHeight})
+        mounted = true
+        ref.focus()
+    })
+
+    socket.on('connect', ()=>{
+        socket.emit('join', id)
+    })
+
+    socket.on('msg', async(obj)=>{
+        await api.put(`seen?id=${id}`, {}, user.token)
+        items = [...items, obj]
+        updateScroll()
+    })
+
+    let keydown = (e) => {
+        switch(e.keyCode){
+            case 13:
+                send()
+        }
+    }
+
+    let get=async()=>{
+        res = await api.get(`messages?id=${id}&page=${page+1}`, user.token)
+        items = res.items
+        total = res.total
+        page++
+    }
 
     let exit=async()=>{
         socket.emit('leave', room.id)
@@ -40,37 +81,6 @@
         }
     }
 
-    onMount(()=>{
-        window.scrollTo({left: 0, top: document.body.scrollHeight})
-        ref.focus()
-    })
-
-    $context = room.name
-
-    $: if(total > 100 && window.scrollTop==window.scrollHeight){
-        page++
-        get()
-    }
-
-    socket.on('connect', ()=>{
-        socket.emit('join', id)
-    })
-
-    let value
-    let ref
-
-    let keydown = (e) => {
-        switch(e.keyCode){
-            case 13:
-                send()
-        }
-    }
-
-    socket.on('msg', (obj)=>{
-        items = [...items, obj]
-        updateScroll()
-    })
-
     let send=async()=>{
         if(!value) return
         value=value.trim()
@@ -83,7 +93,7 @@
     }
 
     let updateScroll=()=>{
-        setInterval(()=>{
+        setTimeout(()=>{
             window.scrollTo({left: 0, top: document.body.scrollHeight})
         }, 0)
     }
@@ -99,7 +109,7 @@
     <Column>
             <span>
                 <p on:click={go} class:head-link={room.user == user.username} class='head'>
-                    {$context}
+                    {room.name}
                 </p>
                 <p on:click={exit} class='small'>Leave</p>
             </span>
@@ -118,7 +128,7 @@
 
 <Row noGutter>
     <Column>
-        <TextInput bind:ref bind:value />
+        <TextArea rows={1} bind:ref bind:value />
     </Column>
 </Row>
 

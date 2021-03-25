@@ -68,7 +68,6 @@ polka({server})
       TTL: 5184000
     }
     for (let sub of subs){
-      console.log('toPush')
       let json = {id: id}
       let payload = JSON.stringify(json)
         webPush.sendNotification(sub, payload, options).catch(err => {

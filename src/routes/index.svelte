@@ -37,9 +37,9 @@
         let res = await api.get(url, user.token)
         if(Array.isArray(res.items)){
             rooms = res.items
+            // rooms.forEach(r=> console.log(r.name, r.s))
         }
         total = res.total
-        pages = res.pages
         got = true
 
     }
@@ -55,7 +55,7 @@
     <br />
     <Row noGutter>
         <Column>
-            <Link href='' on:click={go(room)}>{room.name}</Link>
+            <p class:unseen={room.unseen} class='item' href='' on:click={go(room)}>{room.name}</p>
         </Column>
     </Row>
 {/each}
@@ -67,3 +67,16 @@
         </Column>
     </Row>
 {/if}
+
+<style>
+    .item {
+        width: min-content;
+        cursor: pointer; 
+    }
+    .item:hover {
+        color: grey;
+    }
+    .unseen {
+        font-weight: 600;
+    }    
+</style>
