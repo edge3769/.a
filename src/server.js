@@ -20,10 +20,6 @@ const FileStore = sessionFileStore(session);
 const { PORT, NODE_ENV, VAPID_PUBLIC, VAPID_PRIVATE } = process.env;
 const server = http.createServer()
 
-const wp = new Promise((resolve, reject) => {
-
-})
-
 const exitHandler = terminate(server, {
   coredump: false,
   timeout: 500
@@ -33,7 +29,6 @@ process.on('uncaughtException', exitHandler(1, 'Unexpected Error'))
 process.on('unhandledRejection', exitHandler(1, 'Unhandles Promise'))
 process.on('SIGTERM', exitHandler(0, 'SIGTERM'))
 process.on('SIGINT', exitHandler(0, 'SIGINT'))
-
 
 function httpsRedirect(req, res, next){
   if(!req.headers['x-forwarded-proto'] === 'https' && !process.env.NODE_ENV === 'development'){
@@ -65,7 +60,7 @@ polka({server})
   })
   .put('/send', async(req, res)=>{
     let id = req.body.id
-    let {subs} = await api.get(`subs/?id=${id}&key=${process.env.KEY}`) || []
+    let {subs} = await api.get(`subs/?id=${id}&key=${process.env.KEY}`)
     const options = {
       TTL: 5184000
     }

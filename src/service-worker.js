@@ -90,9 +90,9 @@ async function fetchAndCache(request) {
 		})
 	})
 
-	// return caches.open(`offline${timestamp}`).then((cache) => {
-	// 	return cache.match(request).then((cacheRes) => {
-	// 		return cacheRes || fetch(request).then((netRes)=>{
+	// return caches.open(`offline${timestamp}`).then(cache => {
+	// 	return cache.match(request).then(cacheRes => {
+	// 		return cacheRes || fetch(request).then(netRes=>{
 	// 			cache.put(request, netRes.clone())
 	// 			return netRes
 	// 		})
