@@ -61,6 +61,9 @@ polka({server})
   .put('/send', async(req, res)=>{
     let id = req.body.id
     let {subs} = await api.get(`subs/?id=${id}&key=${process.env.KEY}`)
+    if (!Array.isArray(subs)){
+      subs = []
+    }
     const options = {
       TTL: 5184000
     }
