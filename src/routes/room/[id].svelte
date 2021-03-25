@@ -18,12 +18,10 @@
 <script>
     export let room, items, page, total, user, id
     import {goto} from '@sapper/app'
-    import Exit16 from 'carbon-icons-svelte/lib/Exit16'
     import { context } from '../../stores.js'
     import {
         Row,
         Column,
-        Button,
         TextInput,
     } from 'carbon-components-svelte'
     import io from 'socket.io-client'
@@ -37,7 +35,7 @@
     }
 
     let go=()=>{
-        if(!room.open && room.user == user.username){
+        if(room.user == user.username){
             goto(`edit/${room.id}`)
         }
     }
@@ -99,16 +97,12 @@
 
 <Row noGutter>
     <Column>
-        <p on:click={go} class='head'>{$context}</p>
-        <Button
-            hasIconOnly
-            kind='ghost'
-            iconDescription='Exit'
-            tooltipPosition='bottom'
-            tooltipAlignment='center'
-            icon={Exit16}
-            on:click={exit}
-        />
+            <span>
+                <p on:click={go} class:head-link={room.user == user.username} class='head'>
+                    {$context}
+                </p>
+                <p on:click={exit} class='small'>Leave</p>
+            </span>
         <div class='head-space'></div>
     </Column>
 </Row>
@@ -116,8 +110,8 @@
 {#each items as item}
     <Row noGutter>
         <Column>
-            <p style='color: grey; font-size: 0.75rem;'>{item.user}</p>
-            <p style='overflow-wrap: break-word'>{item.value}</p>            
+            <p class='small'>{item.user}</p>
+            <p class='message'>{item.value}</p>            
         </Column>
     </Row>
 {/each}
@@ -129,8 +123,19 @@
 </Row>
 
 <style>
+    .small {
+        color: grey; 
+        font-size: 0.75rem;
+        cursor: pointer;
+    }
+    .message {
+        overflow-wrap: break-word;
+    }
     .head-space {
         height: 0.5rem;
+    }
+    .head-link {
+        cursor: pointer;
     }
     .head {
         font-size: .875rem;

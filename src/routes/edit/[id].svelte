@@ -7,7 +7,7 @@
             this.redirect(302, 'enter')
         }
         if (!(room.user == user.username)){
-            this.error(401, 'Unauthorised')
+            this.error(401, 'Unauthorized')
         }
         return { room, user }
     }
@@ -73,7 +73,9 @@
     <title>Edit Room</title>
 </svelte:head>
 
-<Tag bind:tags />
+{#if room.open}
+    <Tag bind:tags />
+{/if}
 
 <Row noGutter>
     <Column>

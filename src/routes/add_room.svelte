@@ -51,6 +51,7 @@
     }
 
     const checkUser=async()=>{
+        if($username == '') return
         let res = await api.get(`users/${$username}`) || {}
         if(res.id){
             userInvalid = false
