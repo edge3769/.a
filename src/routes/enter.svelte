@@ -45,22 +45,20 @@
         }
     }
 
-    $: if (username === '') {
-        usernameInvalid=true
-        usernameError='No username'
-    } else {
-        usernameInvalid=false
-    }
-    $: if (password === '') {
-        passwordInvalid=true
-        passwordError='No password'
-    } else {
-        passwordInvalid=false
-    }
-
     let join  = async function() {
         joinLoading = true
-        if (!username || !password || username === '' || password === '') return
+        if (!username){
+            usernameInvalid = true
+            usernameError = 'Empty'
+            joinloading = false
+            return
+        }
+        if (!password){
+            passwordInvalid = true
+            passwordError = 'Empty'
+            joinloading = false
+            return
+        }
         usernameInvalid=false
         passwordInvalid=false
         let r = await post(`auth/join`, { username, password })
@@ -82,7 +80,18 @@
 
     let login = async function() {
         loginLoading = true
-        if (!username || !password || username === '' || password === '') return
+        if (!username){
+            usernameInvalid = true
+            usernameError = 'Empty'
+            loginLoading = false
+            return
+        }
+        if (!password){
+            passwordInvalid = true
+            passwordError = 'Empty'
+            loginLoading = false
+            return
+        }
         usernameInvalid=false
         passwordInvalid=false
         let r = await post(`auth/login`, { username, password })

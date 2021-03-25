@@ -4,7 +4,7 @@
   import { post } from 'utils.js'
   import { stores, goto } from '@sapper/app'
   import SideNavLink from './SideNavLink.svelte'
-  import { isSideNavOpen, logged } from '../stores.js'
+  import { open, isSideNavOpen, logged } from '../stores.js'
   import {
     SkipToContent,
     SideNavItems,
@@ -16,6 +16,10 @@
   let installRef
   let installPrompt
   $isSideNavOpen = false
+
+  let openAdd=()=>{
+    $open=true
+  }
 
   let installed=()=>{
     show=false
@@ -68,7 +72,7 @@
       {#if show}
         <SideNavLink bind:ref={installRef} on:click={install} href='' text='Add To Homescreen'/>
       {/if}
-      <SideNavLink href='add_room' text='Add Room'/>
+      <SideNavLink on:click={openAdd} href='add_room' text='Add Room'/>
       <!-- <SideNavLink href='rooms/{$session.user.id}' text='My Rooms'/> -->
       <SideNavLink href='rooms' text='Rooms'/>
       <SideNavLink href='users' text='Users'/>

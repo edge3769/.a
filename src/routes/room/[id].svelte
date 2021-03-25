@@ -18,14 +18,23 @@
 <script>
     export let room, items, page, total, user, id
     import {goto} from '@sapper/app'
+    import Exit16 from 'carbon-icons-svelte/lib/Exit16'
     import { context } from '../../stores.js'
     import {
         Row,
         Column,
+        Button,
         TextInput,
     } from 'carbon-components-svelte'
     import io from 'socket.io-client'
     import {onMount} from 'svelte'
+    const socket = io()
+
+    let exit=async()=>{
+        socket.emit('leave', room.id)
+        await api.put('leave', {id:room.id}, user.token)
+        goto('/')
+    }
 
     let go=()=>{
         if(!room.open && room.user == user.username){
@@ -45,7 +54,6 @@
         get()
     }
 
-    const socket = io()
     socket.on('connect', ()=>{
         socket.emit('join', id)
     })
@@ -92,6 +100,15 @@
 <Row noGutter>
     <Column>
         <p on:click={go} class='head'>{$context}</p>
+        <Button
+            hasIconOnly
+            kind='ghost'
+            iconDescription='Exit'
+            tooltipPosition='bottom'
+            tooltipAlignment='center'
+            icon={Exit16}
+            on:click={exit}
+        />
         <div class='head-space'></div>
     </Column>
 </Row>

@@ -17,14 +17,26 @@
         Column,
         Checkbox,
         ButtonSet,
-        FluidForm
+        FluidForm,
+        InlineLoading
     } from 'carbon-components-svelte'
+    import Exit16 from 'carbon-icons-svelte/lib/Exit16'
     import {open, username, context} from '../stores.js'
     import { goto } from '@sapper/app'
     import * as api from 'api'
 
     let nameInvalid
     let userInvalid
+    let nameError
+    let userError
+    let openLabel
+    let adding
+
+    $: if(!$open){
+        openLabel = 'Personal'
+    } else {
+        openLabel = 'Open'
+    }
 
     $: change($username)
 
@@ -44,6 +56,7 @@
             userInvalid = false
         } else {
             userInvalid = true
+            userError = 'Not found'
         }
     }
     
@@ -51,19 +64,37 @@
     let tags
 
     const add = async function() {
-        if(!name) return
+        adding = true
+        if (!name){
+            nameInvalid = true
+            nameError = 'Empty'
+            adding = false
+            return
+        }
+        if (!$username){
+            userInvalid = true
+            userError = 'Empty'
+            adding = false
+            return
+        }
         let data = {
+            username: $username,
             open: $open,
-            tags,
             name,
-            username: $username
+            tags,
         }
         let res = await api.post('rooms', data, user.token)
         if (res.nameError) {
+            nameError = res.nameError
             nameInvalid = true
-        }
-        if (res.id) {
+            adding = false
+        } else if (res.userError) {
+            userError = res.userError
+            userInvalid = true
+            adding = false
+        } else if (res.id) {
             $context=name
+            adding=false
             goto(`room/${res.id}`)
         }
     }
@@ -75,7 +106,7 @@
 
 <Row noGutter>
     <Column>
-        <Checkbox bind:checked={$open} labelText='Open' />
+        <Checkbox bind:checked={$open} labelText={openLabel} />
     </Column>
 </Row>
 
@@ -88,14 +119,14 @@
         <FluidForm>
             <Input
                 bind:invalid={nameInvalid}
-                invalidText='Name taken'
+                invalidText={nameError}
                 labelText="Name"
                 bind:value={name} 
             />
             {#if !$open}
                 <Input
                     bind:invalid={userInvalid}
-                    invalidText='No user'
+                    invalidText={userError}
                     labelText='User'
                     bind:value={$username}
                 />
@@ -107,7 +138,14 @@
 <Row noGutter>
     <Column>     
         <ButtonSet stacked>
-            <Button on:click={add}>Add</Button>
+            <Button as let:props>
+                <div on:click={add} {...props}>
+                    <p>Add</p>
+                    {#if adding}
+                        <InlineLoading />
+                    {/if}
+                </div>
+            </Button>
         </ButtonSet>
     </Column>
 </Row>

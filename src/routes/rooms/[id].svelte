@@ -5,7 +5,7 @@
         }
         let {id} = params
         let tagString = JSON.stringify([])
-        let url = `rooms?id=${id}&tags=${tagString}&page=1`
+        let url = `xrooms?id=${id}&tags=${tagString}&page=1`
         let res = await api.get(url, user.token)
         let rooms
         if (Array.isArray(res.items)) {

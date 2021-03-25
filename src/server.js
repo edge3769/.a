@@ -34,8 +34,8 @@ process.on('unhandledRejection', exitHandler(1, 'Unhandles Promise'))
 process.on('SIGTERM', exitHandler(0, 'SIGTERM'))
 process.on('SIGINT', exitHandler(0, 'SIGINT'))
 
+
 function httpsRedirect(req, res, next){
-  console.log(req.headers['x-forwarded-proto'])
   if(!req.headers['x-forwarded-proto'] === 'https' && !process.env.NODE_ENV === 'development'){
     redirect(res, 301, `https://${req.headers.host}${req.url}`)
   }
@@ -65,11 +65,12 @@ polka({server})
   })
   .put('/send', async(req, res)=>{
     let id = req.body.id
-    let {subs} = await api.get(`subs/${id}`) || []
+    let {subs} = await api.get(`subs/?id=${id}&key=${process.env.KEY}`) || []
     const options = {
       TTL: 5184000
     }
     for (let sub of subs){
+      console.log('toPush')
       let json = {id: id}
       let payload = JSON.stringify(json)
         webPush.sendNotification(sub, payload, options).catch(err => {
@@ -100,6 +101,10 @@ polka({server})
   .listen(PORT)
 
 io(server).on('connection', (socket)=>{
+  socket.on('leave', id=>{
+    socket.leave(id)
+  })
+
   socket.on('join', (id)=>{
     socket.join(id)
   })

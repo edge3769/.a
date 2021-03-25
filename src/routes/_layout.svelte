@@ -42,8 +42,8 @@
         }
         return registration.pushManager.subscribe(options)
       })
-    }).then((sub)=>{
-      api.post('subs', {id: $session.user.id, sub})
+    }).then(async(sub)=>{
+      await api.post('subs', {key: process.env.KEY, id: $session.user.id, sub})
     })
   }  
 
