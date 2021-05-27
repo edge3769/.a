@@ -33,10 +33,8 @@
         Column,
         Row,
     } from 'carbon-components-svelte'
-    import { session } from '$app/stores'
     import Tag from '$lib/components/Tag.svelte'
     import Input from '$lib/components/Input/Input.svelte'
-
 
     let username = user.username
     let visible = user.visible
@@ -67,8 +65,9 @@
             tags,
         } 
         let res = await api.put('users', data, token)
+        usernameInvalid = res.usernameInvalid
+        usernameError = res.usernameError
         if (res.id) {
-            $session.user = res;
             goto('/')
         }
     }
