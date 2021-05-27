@@ -1,9 +1,24 @@
 <script context='module'> 
-    export async function preload({params}, {user}){
-        if(!user){
-            this.redirect('302', 'enter')
+    export async function load({session}){
+        const token = session.token
+        if(!token){
+            return {
+                status: 302,
+                redirect: 'login'
+            }
         }
-        return {user}
+        const res = await api.get('user', token)
+        if(res.error){
+            return {
+                status: res.status,
+                error: res.error
+            }
+        }
+        return {
+            props: {
+                user: res
+            }
+        }
     }
 </script>
 
@@ -11,27 +26,25 @@
     export let user
     import {
         Row,
-        Link,
         Column
     } from 'carbon-components-svelte'
-    import Tag from '../components/Tag.svelte'
-    import * as api from 'api'
-    import { goto } from '@sapper/app'
+    import Tag from '$lib/components/Tag.svelte'
+    import * as api from '$lib/api'
+    import { goto } from '$app/navigation'
     import {
         open,
         username,
         userTags
-    } from '../stores.js'
+    } from '$lib/stores'
 
     let users = []
     let page = 0
     let total = 0
     let got
 
-    let go=async(u)=>{
-        $open=false
-        $username=u
-        goto('add_room')
+    let go=async(_username)=>{
+        name = await api.post('')
+        goto('/add_room')
     }
 
     let get=async()=>{

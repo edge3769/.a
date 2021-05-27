@@ -1,16 +1,21 @@
 <script context="module">
-    export async function preload({ path }, { user }) {
-        if (!user) {
-            this.redirect(302, `enter`);
+    export async function load({ session }) {
+        const token = session.token
+        if (!token) {
+            return {
+                status: 302,
+                redirect: 'login'
+            }
         }
+        const user = await api.get('user', token)
         return { user }
     }
 </script>
 
 <script>
     export let user
-    import Input from '../components/Input/Input.svelte'
-    import Tag from '../components/Tag.svelte'
+    import Input from '$lib/components/Input/Input.svelte'
+    import Tag from '$lib/components/Tag.svelte'
     import {
         Row,
         Button,
@@ -20,10 +25,9 @@
         FluidForm,
         InlineLoading
     } from 'carbon-components-svelte'
-    import Exit16 from 'carbon-icons-svelte/lib/Exit16'
-    import {open, username, context} from '../stores.js'
-    import { goto } from '@sapper/app'
-    import * as api from 'api'
+    import {open, username, context} from '$lib/stores'
+    import { goto } from '$lib/navigation'
+    import * as api from '$lib/api'
 
     let nameInvalid
     let userInvalid
@@ -31,12 +35,6 @@
     let userError
     let openLabel
     let adding
-
-    $: if(!$open){
-        openLabel = 'Personal'
-    } else {
-        openLabel = 'Open'
-    }
 
     $: change($username)
 
@@ -96,7 +94,7 @@
         } else if (res.id) {
             $context=name
             adding=false
-            goto(`room/${res.id}`)
+            goto(`/room/${res.id}`)
         }
     }
 </script>

@@ -1,29 +1,42 @@
 <script context="module">
-    import * as api from 'api.js';
-    export async function preload({params}, { user }) {
-        if (!user){
-            this.redirect(302, 'enter')
+    import * as api from '$lib/api';
+    export async function load({ page, session }) {
+        const token = session.token
+        if (!token){
+            return {
+                status: 302,
+                redirect: 'login'
+            }
         }
-        user = await api.get(`users/${user.id}`) || {}
-        return {user}
+        const res = await api.get('user', token)
+        if(res.error){
+            return {
+                status: res.status,
+                error: res.error
+            }
+        }
+        return {
+            props: {
+                user: res
+            }
+        }
     }
 </script>
     
 <script>
     export let user
-    import { goto, stores } from '@sapper/app';
+    import { goto } from '$app/navigation'
     import {
         FluidForm,
-        TextInput,
         Checkbox,
         Button,
         Column,
         Row,
-        Tag
     } from 'carbon-components-svelte'
-    import Input from '../components/Input/Input.svelte'
+    import { session } from '$app/stores'
+    import Tag from '$lib/components/Tag.svelte'
+    import Input from '$lib/components/Input/Input.svelte'
 
-    let { session } = stores();
 
     let username = user.username
     let visible = user.visible
@@ -32,41 +45,12 @@
 
     let usernameInvalid
     let usernameError
-    let current
-    let open
-    let tag
-    let ref
 
     $: if (username === '') {
         usernameInvalid=true
         usernameError='No username'
     } else {
         usernameInvalid=false
-    }
-
-    let clear = () => {
-        open=false
-        tags = []
-    }
-
-    let keydown = (e) => {
-        switch(e.keyCode){
-            case 13:
-                if (e.ctrlKey){ edit()
-                } else if (current==ref) addTag()
-        }
-    }
-
-    let addTag = () => {
-        if (tag != '' && !tags.includes(tag)){
-            tags = [...tags, tag]
-            open=true
-            tag=''
-        }
-    }
-
-    let delTag = (tag) => {
-        tags = tags.filter(t => t != tag)
     }
 
     let checkUsername = async () => {
@@ -76,6 +60,7 @@
     }
 
     let edit = async () => {
+        if(usernameInvalid) return
         let data = {
             username,
             visible,
@@ -89,8 +74,6 @@
     }
 </script>
 
-<svelte:window on:keydown={keydown} />
-
 <svelte:head>
     <title>Edit</title>
 </svelte:head>
@@ -101,32 +84,7 @@
     </Column>
 </Row>
 
-<Row noGutter>
-    <Column noGutter>
-        <TextInput
-            on:focus={() => {open=true; current=ref}}
-            placeholder='Add tag'
-            bind:value={tag}
-            bind:ref
-        />
-    </Column>
-</Row>
-
-{#if open}
-    <Row noGutter>
-        <Column>
-            <Tag
-                on:click={clear}
-                type='magenta'
-            >
-                Clear
-            </Tag>
-            {#each tags as tag}
-                <Tag filter on:click={delTag(tag)}>{tag}</Tag>
-            {/each}
-        </Column>
-    </Row>
-{/if}
+<Tag bind:tags={tags} />
     
 <Row noGutter>
     <Column>

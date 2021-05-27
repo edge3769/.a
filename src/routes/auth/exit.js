@@ -1,6 +1,14 @@
-import * as api from 'api'
-export function post(req, res) {
-    api.del(`tokens?id=${req.session.user.id}`, req.session.user.token)
-    delete req.session.user
-    res.end(JSON.stringify({ ok: true }))
+import * as api from '$lib/api'
+
+export async function post(req) {
+    await api.del('tokens', req.locals.token)
+    req.locals.token = null
+    return {
+        headers: {
+            'set-cookie': 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC'
+        },
+        body: {
+            ok: true
+        }
+    }
 }

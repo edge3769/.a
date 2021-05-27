@@ -1,30 +1,56 @@
 <script context='module'>
-    import * as api from 'api'
-    export async function preload({}, {user}){
-        if(!user){
-            this.redirect(302, 'enter')
+    import * as api from '$lib/api'
+    export async function load({ session }){
+        const token = session.token
+        if(!token){
+            return {
+                status: 302,
+                redirect: 'login'
+            }
+        }
+        const user_res = await api.get('user', token)
+        if(user_res.error){
+            return {
+                status: user_res.status,
+                error: user_res.error
+            }
         }
         let rooms
-        let {items, total, page} = await api.get('xrooms', user.token) || {}
+        let room_res = await api.get('xrooms', token)
+        if(room_res.error){
+            return {
+                status: room_res.status,
+                error: room_res.error
+            }
+        }
+        let { items, total, page } = room_res
         if (Array.isArray(items)) {
             rooms = items
         } else {
             rooms = []
         }
-        return {rooms, total, page, user}
+        return {
+            props: {
+                user: user_res,
+                rooms,
+                total,
+                page
+            }
+        }
     }
 </script>
 
 <script>
-    export let rooms, total, page, user
+    export let rooms
+    export let total
+    export let page
+    export let user
     import {
         Row,
-        Link,
         Column,
     } from 'carbon-components-svelte'
-    import {onMount} from 'svelte'
-    import Tag from '../components/Tag.svelte'
-    import { goto } from '@sapper/app'
+    import Tag from '$lib/components/Tag.svelte'
+    import { goto } from '$lib/navigation'
 
     let tags
 
@@ -34,7 +60,7 @@
     }
 
     let go=(room)=>{
-        goto(`room/${room.id}`)
+        goto(`/room/${room.id}`)
     }
 
     let get=async()=>{

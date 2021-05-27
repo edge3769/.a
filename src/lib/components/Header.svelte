@@ -1,10 +1,11 @@
 <svelte:window on:appinstalled={installed} on:beforeinstallprompt={before} />
 
 <script>
-  import { post } from 'utils.js'
-  import { stores, goto } from '@sapper/app'
-  import SideNavLink from './SideNavLink.svelte'
-  import { open, isSideNavOpen, logged } from '../stores.js'
+  import { post } from '$lib/utils'
+  import { goto } from '$app/navigation'
+  import { session } from '$app/stores'
+  import SideNavLink from '$lib/components/SideNavLink.svelte'
+  import { open, isSideNavOpen } from '$lib/stores'
   import {
     SkipToContent,
     SideNavItems,
@@ -15,23 +16,19 @@
   let show
   let installRef
   let installPrompt
-  $isSideNavOpen = false
+  let token = $session.token
 
-  let openAdd=()=>{
-    $open=true
-  }
-
-  let installed=()=>{
+  const installed=()=>{
     show=false
   }
 
-  let before=(e)=>{
+  const before=(e)=>{
     show=true
     e.preventDefault()
     installPrompt = e
   }
 
-  let install=()=>{
+  const install=()=>{
         installPrompt.prompt()
         installPrompt.userChoice.then((choice)=>{
           if(choice.outcome === 'accepted'){
@@ -40,17 +37,10 @@
         })
   }
 
-  let { session } = stores()
-
-  if ($session.user){
-    $logged = true
-  }
-
-  let exit = async()=>{
-    await post(`auth/exit`)
-    delete $session.user
-    $logged=false
-    goto('enter')
+  const exit = async()=>{
+    await post('/auth/exit')
+    delete $session.token
+    goto('/login')
   }
 </script>
 
@@ -68,19 +58,19 @@
 
 <SideNav bind:isOpen={$isSideNavOpen}>
   <SideNavItems>
-    {#if $session.user && $logged}
+    {#if token}
       {#if show}
         <SideNavLink bind:ref={installRef} on:click={install} href='' text='Add To Homescreen'/>
       {/if}
-      <SideNavLink on:click={openAdd} href='add_room' text='Add Room'/>
-      <!-- <SideNavLink href='rooms/{$session.user.id}' text='My Rooms'/> -->
-      <SideNavLink href='rooms' text='Rooms'/>
-      <SideNavLink href='users' text='Users'/>
-      <SideNavLink href='edit' text='Edit'/>
+      <SideNavLink href='/add_room' text='Add Room'/>
+      <!-- <SideNavLink href='/rooms/{$session.user.id}' text='My Rooms'/> -->
+      <SideNavLink href='/rooms' text='Rooms'/>
+      <SideNavLink href='/users' text='Users'/>
+      <SideNavLink href='/edit' text='Edit'/>
       <SideNavLink text='Exit' href='' on:click={exit} />
     {/if}
-    {#if !$session.user || !$logged}
-      <SideNavLink text='Enter' href='enter'/>
+    {#if !token}
+      <SideNavLink text='Enter' href='/login'/>
     {/if}
   </SideNavItems>
 </SideNav>

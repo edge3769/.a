@@ -1,9 +1,12 @@
 <script context='module'>
-    export async function preload({params}, {user}){
-        if(!user){
-            this.redirect('302', 'enter')
+    export async function load({page, session}){
+        if(!session.token){
+            return {
+                status: 302,
+                redirect: 'login'
+            }
         }
-        let {id} = params
+        let { id } = page.params
         let tagString = JSON.stringify([])
         let url = `xrooms?id=${id}&tags=${tagString}&page=1`
         let res = await api.get(url, user.token)
@@ -15,13 +18,26 @@
         }
         let total = res.total
         let pages = res.pages
-        if (res == '401'){
-            this.redirect(302, 'enter')
+        if (res.status === 401){
+            return {
+                status: 302,
+                redirect: 'login'
+            }
         }
-        if (res == '404'){
-            this.error(404, 'User not Found')
+        if (res.status === 404){
+            return {
+                status: 404,
+                error: 'User not found'
+            }
         }
-        return {rooms, total, pages, id}
+        return {
+            props: {
+                rooms,
+                total,
+                pages,
+                id
+            }
+        }
     }
 </script>
 
@@ -31,8 +47,8 @@
     export let pages = 0
     export let id
 
-    import { goto } from '@sapper/app'
-    import { myTags } from '../../stores'
+    import { goto } from '$app/navigation'
+    import { myTags } from '$lib/stores'
     import {
         PaginationNav,
         Column,
@@ -40,7 +56,7 @@
         Link,
         Tag,
         Row, } from 'carbon-components-svelte'
-    import * as api from 'api'
+    import * as api from '$lib/api'
     import { onMount } from 'svelte';
     
 
@@ -57,7 +73,7 @@
     let ref
 
     let go=(room)=>{
-        goto(`room/${room.id}`)
+        goto(`/room/${room.id}`)
     }
 
     let keydown = (e) => {

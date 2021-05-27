@@ -1,31 +1,48 @@
 <script context='module'>
-    import * as api from 'api'
-    export async function preload({params}, {user}){
-        const {id} = params
-        if(!user){
-            this.redirect('302', 'enter')
+    import * as api from '$lib/api'
+    export async function load({page, session}){
+        const { id } = page.params
+        const token = session.token
+        if(!token){
+            return {
+                status: 302,
+                redirect: 'login'
+            }
         }
+        let user = await api.get('user', token)
         const room = await api.get(`rooms/${id}`, user.token)
         // if(!room.open && !room.users.includes(user.username)){
         //     this.error('Unauthorized')
         // }
-        let { items, page, total } = await api.get(`messages?id=${id}`, user.token)
+        let res = await api.get(`messages?id=${id}`, user.token)
+        let { items } = res
+        let { total } = res
+        page = res.page
         if (!Array.isArray(items)) items = []
-        return {room, items, page, total, user, id}
+        return {
+            props: {
+                room,
+                items,
+                page,
+                total,
+                user,
+                id
+            }
+        }
     }
 </script>
 
 <script>
     export let room, items, page, total, user, id
-    import {goto} from '@sapper/app'
-    import { context } from '../../stores.js'
+    import { goto } from '$app/navigation'
+    import { context } from '$lib/stores'
     import {
         Row,
         Column,
         TextArea,
     } from 'carbon-components-svelte'
     import io from 'socket.io-client'
-    import {onMount} from 'svelte'
+    import { onMount } from 'svelte'
 
     $context = room.name
     const socket = io()
@@ -77,7 +94,7 @@
 
     let go=()=>{
         if(room.user == user.username){
-            goto(`edit/${room.id}`)
+            goto(`/edit/${room.id}`)
         }
     }
 
