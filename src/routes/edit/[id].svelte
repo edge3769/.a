@@ -2,7 +2,7 @@
     import * as api from '$lib/api'
     export async function load({page, session}){
         let {id} = page.params
-        let room = await api.get(`rooms/${id}`)
+        let room = await api.get(`telegram/${id}`)
         const token = session.token
         if (!token){
             return {
@@ -28,9 +28,9 @@
 
 <script>
     export let room, user
-    import { context } from '$lib/stores'
     import { goto } from '$app/navigation'
     import {
+        InlineLoading,
         FluidForm,
         ButtonSet,
         Column,
@@ -38,34 +38,71 @@
         Modal,
         Row,
     } from 'carbon-components-svelte'
+    import {
+        not_empty_telegram_link_regex,
+        telegram_link_regex 
+    } from '$lib/utils'
     import Tag from '$lib/components/Tag.svelte'
     import Input from '$lib/components/Input/Input.svelte'
 
-    let nameInvalid
+    let linkInvalid
+    let linkError
+    let editLoading
+    let delLoading
 
-    let name = room.name
+    let link = room.link
     let tags = room.tags
     let delOpen
 
     let del = async function(){
-        let res = await api.del(`rooms/${room.id}`, user.token)
+        delLoading = true
+        let res = await api.del(`telegram/${room.id}`, user.token)
+        if (res.status === 401){
+            delLoading = false
+            goto('/login')
+        } 
         if (res.yes){
+            delLoading = false
             goto(`/rooms/${user.id}`)
         }
     }
 
     let edit = async function(){
+        editLoading=true
+        if (!link){
+            linkInvalid = true
+            linkError = 'Empty'
+            editLoading = false
+            return
+        }
+        if (!telegram_link_regex.test(link)){
+            linkInvalid = true
+            if(!not_empty_telegram_link_regex.test(link)){
+                linkError = 'Empty link'
+            } else {
+                linkError = 'Telegram links normally begin with "https://t.me/"'
+            }
+            editLoading = false
+            return
+        }
         let data = {
             id: room.id,
-            name,
+            link,
             tags,
         }
-        let res = await api.put('rooms', data, user.token)
-        if (res.nameError) {
-            nameInvalid = true
+        let res = await api.put('telegram', data, user.token)
+        if (res.status === 401){
+            editLoading = false
+            goto('/login')
+        } 
+        if (res.linkError) {
+            linkInvalid = true
+            linkError = res.linkError
+            editLoading=false
+            return
         }
         if (res.id){
-            $context=name
+            editLoading = false
             goto(`/room/${room.id}`)
         }
     }
@@ -94,10 +131,10 @@
     <Column>
         <FluidForm>
             <Input 
-                labelText="Name" 
-                bind:value={name}
-                bind:invalid={nameInvalid}
-                invalidText='Name taken'
+                labelText="Link" 
+                bind:value={link}
+                bind:invalid={linkInvalid}
+                invalidText={linkError}
             />
         </FluidForm>
     </Column>
@@ -105,7 +142,31 @@
 
 <Row noGutter>
     <ButtonSet stacked>
-        <Button on:click={() => (delOpen=true)}>Delete</Button>
-        <Button on:click={edit}>Edit</Button>
+        <Button as let:props>
+            <div on:click={edit} {...props}>
+                <p>Edit</p>
+                {#if editLoading}
+                    <div class='right'>
+                        <InlineLoading />
+                    </div>
+                {/if}
+            </div>
+        </Button>
+        <Button as let:props>
+            <div on:click={del} {...props}>
+                <p>Delete</p>
+                {#if delLoading}
+                    <div class='right'>
+                        <InlineLoading />
+                    </div>
+                {/if}
+            </div>
+        </Button>
     </ButtonSet>
 </Row>
+
+<style>
+    .right {
+        float: right;
+    }
+</style>

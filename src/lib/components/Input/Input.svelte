@@ -8,13 +8,19 @@
     export let labelText
     export let invalidText
 
-    let current = Valid
 
     $: if (invalid==true) {
         current = Invalid
     } else if (invalid==false) {
         current = Valid
     }
+
+    let current = Valid
+
+    const validate=()=>{
+        console.log('v')
+        invalid=false
+    }
 </script>
 
-<svelte:component this={current} {invalidText} {labelText} {password} bind:value />
+<svelte:component on:input={validate} this={current} {invalidText} {labelText} {password} bind:value />

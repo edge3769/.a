@@ -102,14 +102,6 @@
                     Clear
                 </Tag>
             {/if}
-            <!-- {#if tagGroup}
-                <Tag on:click={initCreate} type='magenta'>
-                    All tag groups
-                </Tag>
-                <Tag on:click={initCreate} type='magenta'>
-                    New tag group
-                </Tag>
-            {/if} -->
             {#each tags as tag}
                 <Tag filter on:click={del(tag)}>{tag}</Tag>
             {/each}

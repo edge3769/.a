@@ -3,9 +3,9 @@
 <script>
   import { post } from '$lib/utils'
   import { goto } from '$app/navigation'
-  import { session } from '$app/stores'
+  import { page, session } from '$app/stores'
   import SideNavLink from '$lib/components/SideNavLink.svelte'
-  import { open, isSideNavOpen } from '$lib/stores'
+  import { isSideNavOpen } from '$lib/stores'
   import {
     SkipToContent,
     SideNavItems,
@@ -62,15 +62,11 @@
       {#if show}
         <SideNavLink bind:ref={installRef} on:click={install} href='' text='Add To Homescreen'/>
       {/if}
-      <SideNavLink href='/add_room' text='Add Room'/>
-      <!-- <SideNavLink href='/rooms/{$session.user.id}' text='My Rooms'/> -->
-      <SideNavLink href='/rooms' text='Rooms'/>
-      <SideNavLink href='/users' text='Users'/>
-      <SideNavLink href='/edit' text='Edit'/>
+      <SideNavLink isSelected={$page.path.split('/')[1] == 'add' ? true : false} href='add' text='Add'/>
       <SideNavLink text='Exit' href='' on:click={exit} />
     {/if}
     {#if !token}
-      <SideNavLink text='Enter' href='/login'/>
+      <SideNavLink text='Login' href='login'/>
     {/if}
   </SideNavItems>
 </SideNav>

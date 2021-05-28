@@ -1,5 +1,5 @@
 let local='http://localhost:5000'
-let live='https://ex369.herokuapp.com'
+let live='https://api.x369.live'
 
 export let base
 

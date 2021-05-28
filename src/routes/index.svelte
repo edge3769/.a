@@ -1,57 +1,54 @@
 <script context='module'> 
     export async function load({ session }){
         const token = session.token
-        if(!token){
-            return {
-                status: 302,
-                redirect: 'login'
-            }
-        }
         const res = await api.get('user', token)
-        if(res.error){
-            return {
-                status: res.status,
-                error: res.error
-            }
+        if (!res) {
+            token = null
         }
         return {
             props: {
-                user: res
+                token
             }
         }
     }
 </script>
 
 <script>
-    export let user
+    export let token
     import {
         Row,
-        Column
+        Column,
+        Checkbox
     } from 'carbon-components-svelte'
     import Tag from '$lib/components/Tag.svelte'
     import * as api from '$lib/api'
-    import { goto } from '$app/navigation'
     import {
-        roomTags
+        tags
     } from '$lib/stores'
 
-    let rooms = []
-    let page = 0
-    let total = 0
-    let got
-
-    let go=async(room)=>{
-        await api.put('join', {id: room.id}, user.token)
-        goto(`/room/${room.id}`)
+    $: if(!mine){
+        visible=true
     }
 
+    $: get($tags, mine, visible)
+
+    let rooms = []
+    let total = 0
+    let page = 0
+    let visible
+    let mine
+    let got
+
     let get = async function(){
-        let tagString = JSON.stringify($roomTags)
-        let url = `rooms?tags=${tagString}&visible=1&page=${page+1}`
-        let res = await api.get(url, user.token)
+        let tagString = JSON.stringify($tags)
+        let url = `telegram?tags=${tagString}&visble=${visible}&page=${page+1}`
+        if(mine) {
+            url = url + '&mine'
+        }
+        let res = await api.get(url, token)
+        console.log(res)
         if(Array.isArray(res.items)){
             rooms = res.items
-            // rooms.forEach(r=> console.log(r.name, r.s))
         }
         total = res.total
         got = true
@@ -63,13 +60,26 @@
     <title>369</title>
 </svelte:head>
 
-<Tag on:change={get} bind:tags={$roomTags} />
+<Tag on:change={get} bind:tags={$tags} />
+
+<Row noGutter>
+    <Column sm={2} md={2} lg={2} xlg={2}>
+        <div style='display: flex;'>
+            {#if token}
+                <Checkbox bind:checked={mine} labelText='Mine' />
+            {/if}
+            {#if mine}
+                <Checkbox bind:checked={visible} labelText='Visible' />
+            {/if}
+        </div>
+    </Column>
+</Row>
 
 {#each rooms as room}
     <br />
     <Row noGutter>
         <Column>
-            <p class:unseen={room.unseen} class='item' href='' on:click={go(room)}>{room.name}</p>
+            <p class='item' href={room.link}>{room.name}</p>
         </Column>
     </Row>
 {/each}
@@ -90,7 +100,4 @@
     .item:hover {
         color: grey;
     }
-    .unseen {
-        font-weight: 600;
-    }    
 </style>
