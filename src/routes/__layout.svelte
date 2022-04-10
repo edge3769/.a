@@ -1,15 +1,15 @@
 <script>
-  export let segment = undefined;
+import "carbon-components-svelte/css/all.css";
 
   import {
     Content,
     Grid,
   } from "carbon-components-svelte";
   import url8 from 'url8'
-  import Header from "../components/Header.svelte";
-  import Theme from "../components/Theme.svelte";
-  import {stores} from '@sapper/app'
-  import * as api from 'api'
+  import Header from "../lib/components/Header.svelte";
+  import Theme from "../lib/components/Theme.svelte";
+  import {stores} from '$app/navigation'
+  import * as api from '$lib/components/api'
 
   let deferredPrompt
 

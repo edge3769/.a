@@ -1,4 +1,4 @@
-import * as api from './node_modules/api'
+import * as api from './lib/components/api'
 import terminate from './node_modules/terminate'
 
 import 'dotenv/config'

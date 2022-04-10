@@ -1,7 +1,7 @@
 <script>
     export let href
     export let text
-    import { isSideNavOpen } from '../stores.js'
+    import { isSideNavOpen } from '../../stores.js'
     import { SideNavLink } from 'carbon-components-svelte'
 
     let click=()=>{

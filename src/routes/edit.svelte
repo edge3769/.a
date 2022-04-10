@@ -1,17 +1,21 @@
 <script context="module">
-    import * as api from 'api.js';
-    export async function preload({params}, { user }) {
+    import * as api from '$lib/components/api.js';
+    export async function load({session}) {
+        let user = session.user
         if (!user){
-            this.redirect(302, 'enter')
+            return {
+                status: 302,
+                redirect: 'enter'
+            }
         }
         user = await api.get(`users/${user.id}`) || {}
-        return {user}
+        return {props: {user}}
     }
 </script>
     
 <script>
     export let user
-    import { goto, stores } from '@sapper/app';
+    import { goto, stores } from '$app/navigation';
     import {
         FluidForm,
         TextInput,
@@ -21,7 +25,7 @@
         Row,
         Tag
     } from 'carbon-components-svelte'
-    import Input from '../components/Input/Input.svelte'
+    import Input from '../lib/components/Input/Input.svelte'
 
     let { session } = stores();
 

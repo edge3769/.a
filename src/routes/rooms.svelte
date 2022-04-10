@@ -1,8 +1,12 @@
 <script context='module'>
-    import * as api from 'api'
-    export async function preload({}, {user}){
+    import * as api from '$lib/components/api'
+    export async function load({session}){
+        let user = session.user
         if(!user){
-            this.redirect(302, 'enter')
+            return {
+                status: 302,
+                redirect: 'enter'
+            }
         }
         let rooms
         let {items, total, page} = await api.get('xrooms', user.token) || {}
@@ -11,7 +15,7 @@
         } else {
             rooms = []
         }
-        return {rooms, total, page, user}
+        return {props:{rooms, total, page, user}}
     }
 </script>
 
@@ -23,8 +27,8 @@
         Column,
     } from 'carbon-components-svelte'
     import {onMount} from 'svelte'
-    import Tag from '../components/Tag.svelte'
-    import { goto } from '@sapper/app'
+    import Tag from '../lib/components/Tag.svelte'
+    import { goto } from '$app/navigation'
 
     let tags
 

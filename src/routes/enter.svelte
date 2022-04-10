@@ -1,7 +1,11 @@
 <script context="module">
-    export async function preload({ user }) {
+        export async function load({session}) {
+            let user = session.user
         if (user) {
-            this.redirect(302, '/');
+            return {
+                status: 302,
+                redirect: '/'
+            }
         }
     }
 </script>
@@ -15,8 +19,8 @@
         ButtonSet,
         InlineLoading
     } from 'carbon-components-svelte';
-    import Input from '../components/Input/Input.svelte'
-    import { goto, stores } from '@sapper/app';
+    import Input from '../lib/components/Input/Input.svelte'
+    import { goto, stores } from '$app/navigation';
     import { isSideNavOpen, logged } from '../stores.js'
     import { post } from 'utils.js';
 

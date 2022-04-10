@@ -1,16 +1,20 @@
 <script context="module">
-    export async function preload({ path }, { user }) {
+    export async function load({ session }) {
+        const user = session.user
         if (!user) {
-            this.redirect(302, `enter`);
+            return {
+                status: 302,
+                redirect: 'enter'
+            }
         }
-        return { user }
+        return { props: {user} }
     }
 </script>
 
 <script>
     export let user
-    import Input from '../components/Input/Input.svelte'
-    import Tag from '../components/Tag.svelte'
+    import Input from '../lib/components/Input/Input.svelte'
+    import Tag from '../lib/components/Tag.svelte'
     import {
         Row,
         Button,
@@ -22,8 +26,8 @@
     } from 'carbon-components-svelte'
     import Exit16 from 'carbon-icons-svelte/lib/Exit16'
     import {open, username, context} from '../stores.js'
-    import { goto } from '@sapper/app'
-    import * as api from 'api'
+    import { goto } from '$app/navigation'
+    import * as api from '$lib/components/api'
 
     let nameInvalid
     let userInvalid

@@ -1,4 +1,4 @@
-import * as api from 'api.js'
+import * as api from '$lib/components/api.js'
 
 export function post(req, res) {
     const { username, password } = req.body

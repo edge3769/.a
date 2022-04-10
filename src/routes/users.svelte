@@ -1,9 +1,13 @@
 <script context='module'> 
-    export async function preload({params}, {user}){
+    export async function load({session}){
+        let user = session.user
         if(!user){
-            this.redirect('302', 'enter')
+            return {
+                status: 302,
+                redirect: 'enter'
+            }
         }
-        return {user}
+        return {props: {user}}
     }
 </script>
 
@@ -14,9 +18,9 @@
         Link,
         Column
     } from 'carbon-components-svelte'
-    import Tag from '../components/Tag.svelte'
-    import * as api from 'api'
-    import { goto } from '@sapper/app'
+    import Tag from '../lib/components/Tag.svelte'
+    import * as api from '$lib/components/api'
+    import { goto } from '$app/navigation'
     import {
         open,
         username,

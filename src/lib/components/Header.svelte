@@ -2,9 +2,9 @@
 
 <script>
   import { post } from 'utils.js'
-  import { stores, goto } from '@sapper/app'
+  import { stores, goto } from '$app/navigation'
   import SideNavLink from './SideNavLink.svelte'
-  import { open, isSideNavOpen, logged } from '../stores.js'
+  import { open, isSideNavOpen, logged } from '../../stores.js'
   import {
     SkipToContent,
     SideNavItems,
