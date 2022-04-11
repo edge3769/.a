@@ -21,7 +21,7 @@ import "carbon-components-svelte/css/all.css";
     })
   }
 
-  const {session} = stores()
+  import {session} from '$app/stores'
 
   let getSub=()=>{
     navigator.serviceWorker.ready

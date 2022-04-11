@@ -2,7 +2,7 @@
 
 <script>
   import { post } from 'utils.js'
-  import { stores, goto } from '$app/navigation'
+  import { goto } from '$app/navigation'
   import SideNavLink from './SideNavLink.svelte'
   import { open, isSideNavOpen, logged } from '../../stores.js'
   import {
@@ -40,7 +40,7 @@
         })
   }
 
-  let { session } = stores()
+  import { session } from '$app/stores'
 
   if ($session.user){
     $logged = true

@@ -1,5 +1,6 @@
 import * as api from './lib/components/api'
 import terminate from './node_modules/terminate'
+import {handler} from './build/handler.js'
 
 import 'dotenv/config'
 import io from 'socket.io';
@@ -51,6 +52,7 @@ global.fetch = (url, opts) => {
 }
 
 polka({server})
+  .use(handler)
   .use(httpsRedirect, bodyParser.json())
   .get('/get', (req, res)=>{
     if(!process.env.VAPID_PUBLIC || !process.env.VAPID_PRIVATE){

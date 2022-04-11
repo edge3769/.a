@@ -15,7 +15,7 @@
     
 <script>
     export let user
-    import { goto, stores } from '$app/navigation';
+    import { goto } from '$app/navigation';
     import {
         FluidForm,
         TextInput,
@@ -27,7 +27,7 @@
     } from 'carbon-components-svelte'
     import Input from '../lib/components/Input/Input.svelte'
 
-    let { session } = stores();
+    import { session } from '$app/stores'
 
     let username = user.username
     let visible = user.visible

@@ -23,8 +23,8 @@
     import { goto, stores } from '$app/navigation';
     import { isSideNavOpen, logged } from '../stores.js'
     import { post } from 'utils.js';
+    import { session } from '$app/stores'
 
-    let { session } = stores();
     let usernameInvalid = false
     let passwordInvalid = false
     let usernameError

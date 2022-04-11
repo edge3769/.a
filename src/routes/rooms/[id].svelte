@@ -30,7 +30,7 @@
                 redirect: "User not found",
             };
         }
-        return { rooms, total, pages, id };
+        return {props:{ rooms, total, pages, id }}
     }
 </script>
 
